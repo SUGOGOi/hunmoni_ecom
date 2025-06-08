@@ -1,0 +1,44 @@
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  min-width: 500px;
+  // border: 1px solid rgb(50, 50, 50);
+
+  th,
+  td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  th {
+    // background: #23272f;
+    background: #18191a;
+
+    color: #b0b6c1;
+    font-weight: 600;
+  }
+
+  tr {
+    border-bottom: 1px solid #23272f;
+    &:hover {
+      // background: #23272f;
+      background: #18191a;
+    }
+  }
+
+  td {
+    color: #f5f6fa;
+    background: #18191a;
+  }
+}
+
+/* Make table horizontally scrollable on small screens */
+@media (max-width: 600px) {
+  .orders-table {
+    display: block;
+    overflow-x: auto;
+    min-width: 400px;
+  }
+}
