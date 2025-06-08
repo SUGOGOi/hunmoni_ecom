@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import "./dashboard.scss";
 import StatCard from "../../components/dashboard/stateCard/StatCard";
 import OrdersTable from "../../components/dashboard/orderTable/OrderTable";
+import { useStore } from "../../store/store";
 
 const Dashboard: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { setActiveMenuItem, activeMenuItem } = useStore();
 
   return (
     <div className="dashboard">
@@ -20,12 +22,45 @@ const Dashboard: React.FC = () => {
         <div className="upper-section">
           <h2 className="dashboard__logo">E-Shop Admin</h2>
           <nav>
-            <ul>
-              <li>Dashboard</li>
-              <li>Products</li>
-              <li>Orders</li>
-              <li>Customers</li>
-              <li>Settings</li>
+            <ul className="sidebar-menu">
+              <li
+                className={`menu-item ${
+                  activeMenuItem === "Dashboard" ? "active" : ""
+                }`}
+                onClick={() => {
+                  setActiveMenuItem("Dashboard");
+                }}
+              >
+                Dashboard
+              </li>
+              <li
+                className={`menu-item ${
+                  activeMenuItem === "Products" ? "active" : ""
+                }`}
+              >
+                Products
+              </li>
+              <li
+                className={`menu-item ${
+                  activeMenuItem === "Orders" ? "active" : ""
+                }`}
+              >
+                Orders
+              </li>
+              <li
+                className={`menu-item ${
+                  activeMenuItem === "Customers" ? "active" : ""
+                }`}
+              >
+                Customers
+              </li>
+              <li
+                className={`menu-item ${
+                  activeMenuItem === "Settings" ? "active" : ""
+                }`}
+              >
+                Settings
+              </li>
             </ul>
           </nav>
         </div>
@@ -46,7 +81,7 @@ const Dashboard: React.FC = () => {
       <main className="dashboard__main">
         <header className="dashboard__navbar">
           <h1>Dashboard</h1>
-          <div className="dashboard__profile">👤 Admin</div>
+          {/* <div className="dashboard__profile">👤 Admin</div> */}
         </header>
         <section className="dashboard__stats">
           <StatCard title="Total Sales" value="$12,340" delta="+5%" />
