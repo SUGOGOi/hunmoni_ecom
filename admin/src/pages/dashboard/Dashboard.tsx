@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./dashboard.scss";
 import StatCard from "../../components/dashboard/stateCard/StatCard";
 import OrdersTable from "../../components/dashboard/orderTable/OrderTable";
@@ -10,6 +10,7 @@ import { BsPeople } from "react-icons/bs";
 import { IoSettingsOutline } from "react-icons/io5";
 // import toast from "react-hot-toast";
 import { FaRegBell } from "react-icons/fa";
+import AdminFooter from "../../components/footer/AdminFooter";
 
 const Dashboard: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -27,18 +28,21 @@ const Dashboard: React.FC = () => {
     //   },
     // });
   };
+  useEffect(() => {
+    setActiveMenuItem("Dashboard");
+  }, []);
 
   return (
     <div className="dashboard">
       <div className={`dashboard__sidebar${sidebarOpen ? " open" : ""}`}>
-        {/* <button
+        <button
           className="dashboard__sidebar-toggle"
           onClick={() => setSidebarOpen(false)}
           aria-label="Close sidebar"
           style={{ display: sidebarOpen ? "block" : "none" }}
         >
           ×
-        </button> */}
+        </button>
         <div className="upper-section">
           <h2 className="dashboard__logo">
             <span>E</span>-Shop Admin
@@ -126,7 +130,7 @@ const Dashboard: React.FC = () => {
           <div className="profile-area" onClick={handleProfile}>
             <img
               src="https://avatars.githubusercontent.com/u/104547345?v=4"
-              alt=""
+              alt="profile photo"
             />
             <p>Sumsum Gogoi</p>
           </div>
@@ -148,7 +152,7 @@ const Dashboard: React.FC = () => {
             <p>Manage your products, orders, etc</p>
           </div>
           <div className="dashboard__notice">
-            <FaRegBell size={22} />
+            <FaRegBell size={21} />
             <p>View notice board</p>
           </div>
         </header>
@@ -162,6 +166,7 @@ const Dashboard: React.FC = () => {
           <h2>Recent Orders</h2>
           <OrdersTable />
         </section>
+        <AdminFooter />
       </main>
     </div>
   );

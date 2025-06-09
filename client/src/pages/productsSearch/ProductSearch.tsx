@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./productSearch.scss";
+import Navbar from "../../components/navbar/Navbar";
 
 interface Product {
   id: number;
@@ -377,6 +378,7 @@ const ProductSearchPage: React.FC = () => {
 
   return (
     <div className="product-search-page">
+      <Navbar />
       {/* Search Header */}
       <div className="search-header">
         <div className="container">

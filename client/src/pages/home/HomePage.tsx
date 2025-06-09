@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./HomePage.scss";
+import Navbar from "../../components/navbar/Navbar";
 
 interface Product {
   id: number;
@@ -27,9 +28,6 @@ const HomePage: React.FC = () => {
     minutes: 30,
     seconds: 45,
   });
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [cartCount, setCartCount] = useState(3);
-  const [searchQuery, setSearchQuery] = useState("");
 
   // Hero slider data
   const heroSlides = [
@@ -187,122 +185,10 @@ const HomePage: React.FC = () => {
     ));
   };
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Search query:", searchQuery);
-    // Handle search logic here
-  };
-
   return (
     <div className="home-page">
       {/* Navbar */}
-      <nav className="navbar">
-        <div className="navbar__container">
-          {/* Logo */}
-          <div className="navbar__logo">
-            <a href="/">
-              <span>E</span>-Shop
-            </a>
-          </div>
-
-          {/* Search Bar */}
-          <div className="navbar__search">
-            <form onSubmit={handleSearch}>
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <button type="submit">🔍</button>
-            </form>
-          </div>
-
-          {/* Desktop Navigation */}
-          <div className="navbar__nav">
-            <a href="/" className="nav-link active">
-              Home
-            </a>
-            <a href="/products" className="nav-link">
-              Products
-            </a>
-            <a href="/categories" className="nav-link">
-              Categories
-            </a>
-            <a href="/about" className="nav-link">
-              About
-            </a>
-            <a href="/contact" className="nav-link">
-              Contact
-            </a>
-          </div>
-
-          {/* User Actions */}
-          <div className="navbar__actions">
-            <button className="action-btn">
-              <span className="icon">👤</span>
-              <span className="text">Account</span>
-            </button>
-            <button className="action-btn">
-              <span className="icon">❤️</span>
-              <span className="text">Wishlist</span>
-              <span className="badge">2</span>
-            </button>
-            <button className="action-btn cart-btn">
-              <span className="icon">🛒</span>
-              <span className="text">Cart</span>
-              <span className="badge">{cartCount}</span>
-            </button>
-          </div>
-
-          {/* Mobile Menu Toggle */}
-          <button className="navbar__toggle" onClick={toggleMenu}>
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
-        </div>
-
-        {/* Mobile Menu */}
-        <div className={`navbar__mobile ${isMenuOpen ? "open" : ""}`}>
-          <div className="mobile-nav">
-            <a href="/" className="mobile-nav-link">
-              Home
-            </a>
-            <a href="/products" className="mobile-nav-link">
-              Products
-            </a>
-            <a href="/categories" className="mobile-nav-link">
-              Categories
-            </a>
-            <a href="/about" className="mobile-nav-link">
-              About
-            </a>
-            <a href="/contact" className="mobile-nav-link">
-              Contact
-            </a>
-          </div>
-          <div className="mobile-actions">
-            <button className="mobile-action-btn">
-              <span className="icon">👤</span>
-              <span>My Account</span>
-            </button>
-            <button className="mobile-action-btn">
-              <span className="icon">❤️</span>
-              <span>Wishlist (2)</span>
-            </button>
-            <button className="mobile-action-btn">
-              <span className="icon">🛒</span>
-              <span>Cart ({cartCount})</span>
-            </button>
-          </div>
-        </div>
-      </nav>
-
+      <Navbar />
       {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-slider">

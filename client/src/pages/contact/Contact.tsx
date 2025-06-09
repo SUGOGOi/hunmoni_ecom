@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./contact.scss";
+import Navbar from "../../components/navbar/Navbar";
 
 interface ContactFormData {
   name: string;
@@ -56,6 +57,7 @@ const ContactPage: React.FC = () => {
 
   return (
     <div className="contact-page">
+      <Navbar />
       <div className="contact-page__container">
         {/* Hero Section */}
         <section className="contact-hero">

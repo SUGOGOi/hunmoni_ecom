@@ -12,6 +12,7 @@ import NotFoundPage from "./pages/404Page/404Page.tsx";
 import ProductDetailPage from "./pages/product/ProductDetailPage.tsx";
 import AuthPage from "./pages/auth/AuthPage.tsx";
 import EmailVerificationPage from "./pages/emailVerification/EmailVerification.tsx";
+import CheckoutPage from "./pages/checkout/CheckOutPage.tsx";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -25,6 +26,7 @@ const App = () => {
     { path: "/product-detail", element: <ProductDetailPage /> },
     { path: "/auth", element: <AuthPage /> },
     { path: "/email-verification", element: <EmailVerificationPage /> },
+    { path: "/checkout", element: <CheckoutPage /> },
   ]);
   return (
     <>
