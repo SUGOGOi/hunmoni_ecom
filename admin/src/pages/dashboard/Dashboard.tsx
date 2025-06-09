@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./dashboard.scss";
 import StatCard from "../../components/dashboard/stateCard/StatCard";
 import OrdersTable from "../../components/dashboard/orderTable/OrderTable";
-import { useStore } from "../../store/store";
+import { useStore } from "../../../../client/src/store/store";
 import { AiOutlineHome } from "react-icons/ai";
 import { AiOutlineProduct } from "react-icons/ai";
 import { LiaShoppingCartSolid } from "react-icons/lia";

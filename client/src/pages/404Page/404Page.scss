@@ -1,0 +1,255 @@
+.not-found-page {
+  background: #101110;
+  color: #f5f6fa;
+  font-family: "Inter", sans-serif;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+.not-found-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+
+  @media (max-width: 768px) {
+    gap: 1.5rem;
+  }
+}
+
+// 404 Animation
+.error-animation {
+  .error-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    .digit {
+      font-size: 5rem;
+      font-weight: 900;
+      color: #d87f37;
+      text-shadow: 0 0 20px rgba(216, 127, 55, 0.3);
+      animation: bounce 2s ease-in-out infinite;
+
+      @media (max-width: 768px) {
+        font-size: 4rem;
+      }
+
+      @media (max-width: 480px) {
+        font-size: 3rem;
+      }
+
+      &.zero {
+        position: relative;
+        animation: spin 3s linear infinite;
+
+        &::before {
+          content: "";
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 70%;
+          height: 70%;
+          border: 3px solid #d87f37;
+          border-radius: 50%;
+          border-top: 3px solid transparent;
+          animation: spin 2s linear infinite reverse;
+        }
+      }
+
+      &:nth-child(1) {
+        animation-delay: 0s;
+      }
+      &:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      &:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+    }
+  }
+}
+
+// Error Message
+.error-message {
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #f5f6fa;
+    margin-bottom: 0.75rem;
+    line-height: 1.2;
+
+    @media (max-width: 768px) {
+      font-size: 2rem;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 1.5rem;
+    }
+  }
+
+  p {
+    font-size: 1.1rem;
+    color: #a8a7a7;
+    line-height: 1.5;
+    margin: 0;
+    max-width: 400px;
+
+    @media (max-width: 768px) {
+      font-size: 1rem;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 0.9rem;
+    }
+  }
+}
+
+// Action Buttons
+.error-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+
+  .btn-primary,
+  .btn-secondary {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    border: none;
+
+    @media (max-width: 480px) {
+      padding: 0.75rem 1.25rem;
+      font-size: 0.9rem;
+    }
+  }
+
+  .btn-primary {
+    background: #d87f37;
+    color: #fff;
+
+    &:hover {
+      background: #e89c5a;
+      transform: translateY(-2px);
+    }
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: #d87f37;
+    border: 2px solid #d87f37;
+
+    &:hover {
+      background: #d87f37;
+      color: #fff;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+// Quick Links
+.quick-links {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+
+  a {
+    color: #a8a7a7;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      color: #d87f37;
+      background: rgba(216, 127, 55, 0.1);
+    }
+
+    @media (max-width: 480px) {
+      font-size: 0.85rem;
+      padding: 0.375rem 0.5rem;
+    }
+  }
+}
+
+// Animations
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-8px);
+  }
+  60% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 480px) {
+  .not-found-content {
+    gap: 1.25rem;
+  }
+
+  .error-actions {
+    flex-direction: column;
+    align-items: center;
+
+    .btn-primary,
+    .btn-secondary {
+      width: 100%;
+      max-width: 200px;
+      justify-content: center;
+    }
+  }
+
+  .quick-links {
+    gap: 1rem;
+  }
+}
+
+// Accessibility
+@media (prefers-reduced-motion: reduce) {
+  .error-number .digit {
+    animation: none;
+  }
+}

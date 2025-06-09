@@ -1,0 +1,492 @@
+.loading-page {
+  background: #101110;
+  color: #f5f6fa;
+  font-family: "Inter", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+
+  &.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    min-height: 100vh;
+  }
+
+  &:not(.fullscreen) {
+    min-height: 400px;
+    padding: 2rem;
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 2;
+  position: relative;
+}
+
+// Logo Section
+.loading-logo {
+  margin-bottom: 2rem;
+  animation: fadeInUp 0.8s ease-out;
+
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #f5f6fa;
+    margin: 0;
+    letter-spacing: -0.02em;
+
+    span {
+      color: #d87f37;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 2rem;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 1.75rem;
+    }
+  }
+}
+
+// Main Spinner
+.loading-spinner {
+  margin-bottom: 2rem;
+  animation: fadeInUp 0.8s ease-out 0.2s both;
+
+  .spinner-ring {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+
+    @media (max-width: 768px) {
+      width: 70px;
+      height: 70px;
+    }
+
+    @media (max-width: 480px) {
+      width: 60px;
+      height: 60px;
+    }
+
+    .spinner-circle {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 4px solid transparent;
+      border-top: 4px solid #d87f37;
+      border-right: 4px solid #d87f37;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+
+      &::before {
+        content: "";
+        position: absolute;
+        top: -4px;
+        left: -4px;
+        right: -4px;
+        bottom: -4px;
+        border: 2px solid transparent;
+        border-top: 2px solid rgba(216, 127, 55, 0.3);
+        border-right: 2px solid rgba(216, 127, 55, 0.3);
+        border-radius: 50%;
+        animation: spin 2s linear infinite reverse;
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+        border: 3px solid transparent;
+        border-top: 3px solid #e89c5a;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+    }
+  }
+}
+
+// Loading Message
+.loading-message {
+  margin-bottom: 1.5rem;
+  animation: fadeInUp 0.8s ease-out 0.4s both;
+
+  p {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #f5f6fa;
+    margin: 0;
+    letter-spacing: 0.02em;
+
+    @media (max-width: 768px) {
+      font-size: 1.1rem;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 1rem;
+    }
+  }
+}
+
+// Loading Dots
+.loading-dots {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  animation: fadeInUp 0.8s ease-out 0.6s both;
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    background: #d87f37;
+    border-radius: 50%;
+    animation: bounce 1.4s ease-in-out infinite both;
+
+    &:nth-child(1) {
+      animation-delay: -0.32s;
+    }
+
+    &:nth-child(2) {
+      animation-delay: -0.16s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 0s;
+    }
+
+    @media (max-width: 480px) {
+      width: 6px;
+      height: 6px;
+    }
+  }
+}
+
+// Progress Bar
+.loading-progress {
+  width: 200px;
+  animation: fadeInUp 0.8s ease-out 0.8s both;
+
+  @media (max-width: 480px) {
+    width: 150px;
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 4px;
+    background: rgba(216, 127, 55, 0.2);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #d87f37, #e89c5a, #d87f37);
+      background-size: 200% 100%;
+      border-radius: 2px;
+      animation: progressMove 2s ease-in-out infinite;
+      width: 100%;
+    }
+  }
+}
+
+// Background Pattern
+.loading-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  overflow: hidden;
+
+  .bg-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      rgba(216, 127, 55, 0.1) 0%,
+      transparent 70%
+    );
+    animation: float 6s ease-in-out infinite;
+
+    &.circle-1 {
+      width: 300px;
+      height: 300px;
+      top: -150px;
+      left: -150px;
+      animation-delay: 0s;
+    }
+
+    &.circle-2 {
+      width: 200px;
+      height: 200px;
+      bottom: -100px;
+      right: -100px;
+      animation-delay: 2s;
+    }
+
+    &.circle-3 {
+      width: 150px;
+      height: 150px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: 4s;
+    }
+
+    @media (max-width: 768px) {
+      &.circle-1 {
+        width: 200px;
+        height: 200px;
+        top: -100px;
+        left: -100px;
+      }
+
+      &.circle-2 {
+        width: 150px;
+        height: 150px;
+        bottom: -75px;
+        right: -75px;
+      }
+
+      &.circle-3 {
+        width: 100px;
+        height: 100px;
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes progressMove {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) scale(1);
+    opacity: 0.1;
+  }
+  50% {
+    transform: translateY(-20px) scale(1.1);
+    opacity: 0.2;
+  }
+}
+
+// Pulse animation for the entire container
+.loading-container {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+// Additional spinner variations
+.loading-spinner.variant-2 {
+  .spinner-circle {
+    border: 4px solid rgba(216, 127, 55, 0.2);
+    border-left: 4px solid #d87f37;
+    animation: spin 1.2s linear infinite;
+
+    &::before,
+    &::after {
+      display: none;
+    }
+  }
+}
+
+.loading-spinner.variant-3 {
+  .spinner-circle {
+    border: none;
+    background: conic-gradient(from 0deg, transparent, #d87f37, transparent);
+    animation: spin 1s linear infinite;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      right: 4px;
+      bottom: 4px;
+      background: #101110;
+      border-radius: 50%;
+    }
+
+    &::after {
+      display: none;
+    }
+  }
+}
+
+// Loading overlay for components
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(16, 17, 16, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+
+  .loading-container {
+    background: #18191a;
+    border: 1px solid rgb(50, 50, 50);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  }
+}
+
+// Small loading spinner for buttons
+.btn-loading {
+  position: relative;
+  pointer-events: none;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  .btn-text {
+    opacity: 0;
+  }
+}
+
+// Skeleton loading for content
+.skeleton-loading {
+  background: linear-gradient(90deg, #18191a 25%, #2b2a2a 50%, #18191a 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+  border-radius: 4px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 480px) {
+  .loading-page {
+    padding: 1rem;
+  }
+
+  .loading-container {
+    gap: 1rem;
+  }
+
+  .loading-logo {
+    margin-bottom: 1.5rem;
+  }
+
+  .loading-spinner {
+    margin-bottom: 1.5rem;
+  }
+
+  .loading-message {
+    margin-bottom: 1rem;
+  }
+
+  .loading-dots {
+    margin-bottom: 1.5rem;
+  }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  .loading-page {
+    background: #0a0a0a;
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .loading-spinner .spinner-circle,
+  .loading-dots .dot,
+  .loading-progress .progress-fill,
+  .loading-background .bg-circle {
+    animation-duration: 3s;
+  }
+}
