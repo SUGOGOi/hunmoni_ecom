@@ -5,27 +5,119 @@
   color: #f5f6fa;
   font-family: "Inter", sans-serif;
 
+  .dashboard__logo {
+    span {
+      color: #d87f37;
+    }
+  }
+
   &__sidebar {
-    width: 220px;
+    width: 250px;
     background: #101110;
     padding: 2rem 1rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    transition: left 0.3s;
+    transition: left 0.3s ease;
     position: relative;
     border-right: 1px solid rgb(50, 50, 50);
-    .profile-area {
-      border: 1px solid rgb(50, 50, 50);
-      border-radius: 10px;
-      padding: 10px;
-      cursor: pointer;
-      // width: 100%;
-      margin: 10px;
+
+    .profile-main {
+      .profile-detail-area {
+        max-height: 500px; // or any max limit that fits your content
+        opacity: 1;
+        visibility: visible;
+        overflow: hidden;
+        transition: all 0.1s ease;
+        padding: 8px;
+        background: #18191a;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+
+        .sign-in-details {
+          margin: 0 3px;
+          padding: 5px;
+          border-radius: 8px;
+          transition: all 0.3s ease;
+          cursor: pointer;
+
+          &:hover {
+            background: #313131;
+          }
+
+          p {
+            font-size: 13px;
+            font-weight: 600;
+          }
+        }
+
+        .my-profile {
+          margin: 0 3px;
+          padding: 5px 10px;
+          border-radius: 8px;
+          transition: all 0.3s ease;
+          cursor: pointer;
+
+          &:hover {
+            background: #313131;
+          }
+
+          p {
+            font-size: 15px;
+          }
+        }
+
+        .log-out {
+          margin: 0 3px;
+          padding: 5px 10px;
+          border-radius: 8px;
+          transition: all 0.3s ease;
+          cursor: pointer;
+
+          &:hover {
+            background: #3f1320;
+            color: #e13352;
+          }
+
+          p {
+            font-size: 15px;
+          }
+        }
+      }
+
+      .profile-area {
+        border: 1px solid rgb(50, 50, 50);
+        border-radius: 10px;
+        padding: 8px;
+        cursor: pointer;
+        margin: 1px;
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        transition: all 0.3s ease;
+
+        img {
+          width: 30px;
+          height: 30px;
+          border-radius: 20px;
+        }
+
+        p {
+          font-size: 13px;
+          color: #a8a7a7;
+        }
+      }
+
+      .profile-detail-area-none {
+        max-height: 0;
+        opacity: 0;
+        visibility: hidden;
+        overflow: hidden;
+      }
     }
 
     .upper-section {
-      // border: 1px solid red;
       width: 100%;
       height: 50%;
       display: flex;
@@ -33,20 +125,31 @@
       justify-content: space-between;
 
       nav {
-        // border: 1px solid red;
         height: 80%;
+
         .sidebar-menu {
           .menu-item {
-            margin: 25px;
-            // border: 1px solid red;
-            // width: 100%;
-            margin: 10px;
+            margin: 8px;
             border-radius: 10px;
-            padding: 10px;
+            padding: 8px;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+
+            &:hover {
+              background-color: #2b2a2a;
+            }
           }
+
           .active {
             background: #d87f37;
+            transition: all 0.3s ease;
+
+            &:hover {
+              background-color: #d87f37;
+            }
           }
         }
       }
@@ -61,6 +164,7 @@
       width: 200px;
       padding: 1.5rem 1rem;
       box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+
       &.open {
         left: 0;
       }
@@ -69,14 +173,12 @@
 
   &__sidebar-toggle {
     z-index: 100;
-    border: 1px solid red;
+    // border: 1px solid red;
     display: none;
     position: absolute;
     top: 1rem;
     right: -2.5rem;
-    // background: #101110;
     background: #18191a;
-
     color: #00e6a0;
     border: none;
     border-radius: 50%;
@@ -85,6 +187,7 @@
     font-size: 1.5rem;
     cursor: pointer;
     z-index: 101;
+    transition: all 0.3s ease;
 
     @media (max-width: 900px) {
       display: block;
@@ -103,20 +206,44 @@
   }
 
   &__navbar {
+    // border: 1px solid red;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
-    // background: #18191a;
-    padding: 1rem 2rem;
+    // margin: 0 1rem;
+    margin-bottom: 1rem;
+
+    padding: 0.3rem;
     border-radius: 8px;
-    // border: 1px solid rgb(50, 50, 50);
+    align-items: center;
+    transition: all 0.3s ease;
+    .dashboard__navbar_left {
+      // border: 1px solid red;
+    }
+    .dashboard__notice {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #2b2a2a;
+      width: 14%;
+      padding: 10px;
+      border-radius: 13px;
+      cursor: pointer;
+      p {
+        font-size: 15px;
+        color: #bababa;
+      }
+    }
+
+    p {
+      color: #7e7e7e;
+    }
 
     @media (max-width: 600px) {
       flex-direction: column;
       align-items: flex-start;
       gap: 0.5rem;
-      padding: 1rem;
+      padding: 0.3rem;
     }
   }
 
@@ -129,6 +256,7 @@
       flex-wrap: wrap;
       gap: 1rem;
     }
+
     @media (max-width: 600px) {
       flex-direction: column;
       gap: 1rem;
@@ -137,11 +265,8 @@
 
   &__orders {
     overflow-x: hidden;
-
-    // background: #23272f;
     background: #18191a;
     border: 1px solid rgb(50, 50, 50);
-
     padding: 1.5rem;
     border-radius: 8px;
     overflow-x: auto;

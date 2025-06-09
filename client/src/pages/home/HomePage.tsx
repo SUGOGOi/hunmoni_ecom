@@ -1,294 +1,446 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "./HomePage.scss";
 
-const HomePage = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [featuredProducts, setFeaturedProducts] = useState([]);
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  originalPrice?: number;
+  image: string;
+  rating: number;
+  reviews: number;
+  badge?: string;
+}
 
-  // Sample data for single vendor store
+interface Category {
+  id: number;
+  name: string;
+  icon: string;
+  productCount: number;
+}
+
+const HomePage: React.FC = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [timeLeft, setTimeLeft] = useState({
+    days: 2,
+    hours: 14,
+    minutes: 30,
+    seconds: 45,
+  });
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(3);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Hero slider data
   const heroSlides = [
     {
       id: 1,
-      title: "New Collection 2025",
-      subtitle: "Premium Quality Products",
-      description: "Discover our latest arrivals with exclusive designs",
-      image: "/api/placeholder/1200/500",
-      cta: "Shop Collection",
+      title: "Summer Collection 2025",
+      subtitle: "Discover the latest trends",
+      description: "Up to 50% off on selected items",
+      image: "/api/placeholder/800/400",
+      buttonText: "Shop Now",
+      buttonLink: "/products",
     },
     {
       id: 2,
-      title: "Limited Time Offer",
-      subtitle: "Up to 50% Off",
-      description: "Don't miss out on our biggest sale of the year",
-      image: "/api/placeholder/1200/500",
-      cta: "Shop Sale",
+      title: "Electronics Sale",
+      subtitle: "Tech deals you can't miss",
+      description: "Free shipping on orders over $99",
+      image: "/api/placeholder/800/400",
+      buttonText: "Explore Deals",
+      buttonLink: "/electronics",
     },
     {
       id: 3,
-      title: "Free Shipping",
-      subtitle: "On Orders Over $99",
-      description: "Fast and reliable delivery to your doorstep",
-      image: "/api/placeholder/1200/500",
-      cta: "Learn More",
+      title: "New Arrivals",
+      subtitle: "Fresh styles just landed",
+      description: "Be the first to get them",
+      image: "/api/placeholder/800/400",
+      buttonText: "View Collection",
+      buttonLink: "/new-arrivals",
     },
   ];
 
-  const categories = [
-    {
-      id: 1,
-      name: "Electronics",
-      image: "/api/placeholder/300/200",
-      count: "150+",
-    },
-    {
-      id: 2,
-      name: "Clothing",
-      image: "/api/placeholder/300/200",
-      count: "320+",
-    },
-    {
-      id: 3,
-      name: "Home & Living",
-      image: "/api/placeholder/300/200",
-      count: "280+",
-    },
-    {
-      id: 4,
-      name: "Sports & Outdoor",
-      image: "/api/placeholder/300/200",
-      count: "95+",
-    },
-    {
-      id: 5,
-      name: "Books & Media",
-      image: "/api/placeholder/300/200",
-      count: "210+",
-    },
-    {
-      id: 6,
-      name: "Health & Beauty",
-      image: "/api/placeholder/300/200",
-      count: "180+",
-    },
-  ];
-
-  const featuredProductsData = [
+  // Featured products
+  const featuredProducts: Product[] = [
     {
       id: 1,
       name: "Wireless Headphones",
-      price: 129.99,
-      originalPrice: 159.99,
-      image: "/api/placeholder/250/250",
-      rating: 4.8,
-      reviews: 124,
+      price: 99.99,
+      originalPrice: 149.99,
+      image: "/api/placeholder/300/300",
+      rating: 4.5,
+      reviews: 128,
+      badge: "Sale",
     },
     {
       id: 2,
       name: "Smart Watch",
-      price: 299.99,
-      originalPrice: 399.99,
-      image: "/api/placeholder/250/250",
-      rating: 4.9,
+      price: 199.99,
+      image: "/api/placeholder/300/300",
+      rating: 4.8,
       reviews: 89,
+      badge: "New",
     },
     {
       id: 3,
-      name: "Laptop Stand",
+      name: "Laptop Backpack",
       price: 49.99,
-      originalPrice: 69.99,
-      image: "/api/placeholder/250/250",
-      rating: 4.7,
+      originalPrice: 79.99,
+      image: "/api/placeholder/300/300",
+      rating: 4.3,
       reviews: 156,
     },
     {
       id: 4,
       name: "Bluetooth Speaker",
       price: 79.99,
-      originalPrice: 99.99,
-      image: "/api/placeholder/250/250",
+      image: "/api/placeholder/300/300",
       rating: 4.6,
       reviews: 203,
+      badge: "Popular",
+    },
+    {
+      id: 5,
+      name: "Gaming Mouse",
+      price: 59.99,
+      originalPrice: 89.99,
+      image: "/api/placeholder/300/300",
+      rating: 4.7,
+      reviews: 94,
+      badge: "Sale",
+    },
+    {
+      id: 6,
+      name: "USB-C Hub",
+      price: 39.99,
+      image: "/api/placeholder/300/300",
+      rating: 4.4,
+      reviews: 67,
     },
   ];
 
-  const testimonials = [
-    {
-      id: 1,
-      name: "Sarah Johnson",
-      review: "Amazing quality products and fast shipping. Highly recommended!",
-      rating: 5,
-      avatar: "/api/placeholder/60/60",
-    },
-    {
-      id: 2,
-      name: "Mike Chen",
-      review: "Great customer service and excellent product selection.",
-      rating: 5,
-      avatar: "/api/placeholder/60/60",
-    },
-    {
-      id: 3,
-      name: "Emily Davis",
-      review: "Love shopping here! Always find what I'm looking for.",
-      rating: 5,
-      avatar: "/api/placeholder/60/60",
-    },
+  // Categories
+  const categories: Category[] = [
+    { id: 1, name: "Electronics", icon: "🔌", productCount: 1250 },
+    { id: 2, name: "Fashion", icon: "👕", productCount: 890 },
+    { id: 3, name: "Home & Garden", icon: "🏠", productCount: 567 },
+    { id: 4, name: "Sports", icon: "⚽", productCount: 423 },
+    { id: 5, name: "Books", icon: "📚", productCount: 789 },
+    { id: 6, name: "Beauty", icon: "💄", productCount: 345 },
+    { id: 7, name: "Toys", icon: "🧸", productCount: 234 },
+    { id: 8, name: "Automotive", icon: "🚗", productCount: 156 },
   ];
 
+  // Auto-slide hero
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
     }, 5000);
     return () => clearInterval(timer);
+  }, [heroSlides.length]);
+
+  // Countdown timer
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev.seconds > 0) {
+          return { ...prev, seconds: prev.seconds - 1 };
+        } else if (prev.minutes > 0) {
+          return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
+        } else if (prev.hours > 0) {
+          return { ...prev, hours: prev.hours - 1, minutes: 59, seconds: 59 };
+        } else if (prev.days > 0) {
+          return {
+            ...prev,
+            days: prev.days - 1,
+            hours: 23,
+            minutes: 59,
+            seconds: 59,
+          };
+        }
+        return prev;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
   }, []);
 
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide(
+      (prev) => (prev - 1 + heroSlides.length) % heroSlides.length
+    );
+  };
+
+  const renderStars = (rating: number) => {
+    return Array.from({ length: 5 }, (_, i) => (
+      <span
+        key={i}
+        className={`star ${i < Math.floor(rating) ? "filled" : ""}`}
+      >
+        ⭐
+      </span>
+    ));
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Search query:", searchQuery);
+    // Handle search logic here
+  };
+
   return (
-    <div className="homepage">
-      {/* Header */}
-      <header className="header">
-        <div className="container">
-          <div className="header__content">
-            <div className="header__logo">
-              <h1>ShopEase</h1>
-            </div>
-            <nav className="header__nav">
-              <ul>
-                <li>
-                  <a href="#home">Home</a>
-                </li>
-                <li>
-                  <a href="#products">Products</a>
-                </li>
-                <li>
-                  <a href="#categories">Categories</a>
-                </li>
-                <li>
-                  <a href="#about">About</a>
-                </li>
-                <li>
-                  <a href="#contact">Contact</a>
-                </li>
-              </ul>
-            </nav>
-            <div className="header__actions">
-              <div className="header__search">
-                <input type="text" placeholder="Search products..." />
-                <button className="search__btn">🔍</button>
-              </div>
-              <div className="header__icons">
-                <button className="icon__btn">
-                  ❤️ <span className="badge">3</span>
-                </button>
-                <button className="icon__btn">
-                  🛒 <span className="badge">2</span>
-                </button>
-                <button className="btn btn--primary">Sign In</button>
-              </div>
-            </div>
+    <div className="home-page">
+      {/* Navbar */}
+      <nav className="navbar">
+        <div className="navbar__container">
+          {/* Logo */}
+          <div className="navbar__logo">
+            <a href="/">
+              <span>E</span>-Shop
+            </a>
+          </div>
+
+          {/* Search Bar */}
+          <div className="navbar__search">
+            <form onSubmit={handleSearch}>
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <button type="submit">🔍</button>
+            </form>
+          </div>
+
+          {/* Desktop Navigation */}
+          <div className="navbar__nav">
+            <a href="/" className="nav-link active">
+              Home
+            </a>
+            <a href="/products" className="nav-link">
+              Products
+            </a>
+            <a href="/categories" className="nav-link">
+              Categories
+            </a>
+            <a href="/about" className="nav-link">
+              About
+            </a>
+            <a href="/contact" className="nav-link">
+              Contact
+            </a>
+          </div>
+
+          {/* User Actions */}
+          <div className="navbar__actions">
+            <button className="action-btn">
+              <span className="icon">👤</span>
+              <span className="text">Account</span>
+            </button>
+            <button className="action-btn">
+              <span className="icon">❤️</span>
+              <span className="text">Wishlist</span>
+              <span className="badge">2</span>
+            </button>
+            <button className="action-btn cart-btn">
+              <span className="icon">🛒</span>
+              <span className="text">Cart</span>
+              <span className="badge">{cartCount}</span>
+            </button>
+          </div>
+
+          {/* Mobile Menu Toggle */}
+          <button className="navbar__toggle" onClick={toggleMenu}>
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+
+        {/* Mobile Menu */}
+        <div className={`navbar__mobile ${isMenuOpen ? "open" : ""}`}>
+          <div className="mobile-nav">
+            <a href="/" className="mobile-nav-link">
+              Home
+            </a>
+            <a href="/products" className="mobile-nav-link">
+              Products
+            </a>
+            <a href="/categories" className="mobile-nav-link">
+              Categories
+            </a>
+            <a href="/about" className="mobile-nav-link">
+              About
+            </a>
+            <a href="/contact" className="mobile-nav-link">
+              Contact
+            </a>
+          </div>
+          <div className="mobile-actions">
+            <button className="mobile-action-btn">
+              <span className="icon">👤</span>
+              <span>My Account</span>
+            </button>
+            <button className="mobile-action-btn">
+              <span className="icon">❤️</span>
+              <span>Wishlist (2)</span>
+            </button>
+            <button className="mobile-action-btn">
+              <span className="icon">🛒</span>
+              <span>Cart ({cartCount})</span>
+            </button>
           </div>
         </div>
-      </header>
+      </nav>
 
       {/* Hero Section */}
-      <section className="hero">
-        <div className="hero__slider">
+      <section className="hero-section">
+        <div className="hero-slider">
           {heroSlides.map((slide, index) => (
             <div
               key={slide.id}
-              className={`hero__slide ${
-                index === currentSlide ? "active" : ""
-              }`}
+              className={`hero-slide ${index === currentSlide ? "active" : ""}`}
             >
-              <div className="hero__content">
-                <div className="container">
-                  <div className="hero__text">
-                    <h2 className="hero__title">{slide.title}</h2>
-                    <h3 className="hero__subtitle">{slide.subtitle}</h3>
-                    <p className="hero__description">{slide.description}</p>
-                    <button className="btn btn--primary btn--large">
-                      {slide.cta}
-                    </button>
+              <div className="hero-content">
+                <div className="hero-text">
+                  <h1>{slide.title}</h1>
+                  <h2>{slide.subtitle}</h2>
+                  <p>{slide.description}</p>
+                  <button className="hero-btn">{slide.buttonText}</button>
+                </div>
+                <div className="hero-image">
+                  <div className="placeholder-image">
+                    <span>Hero Image {index + 1}</span>
                   </div>
                 </div>
               </div>
-              <div className="hero__image">
-                <img src={slide.image} alt={slide.title} />
-              </div>
             </div>
           ))}
-        </div>
-        <div className="hero__indicators">
-          {heroSlides.map((_, index) => (
-            <button
-              key={index}
-              className={`hero__indicator ${
-                index === currentSlide ? "active" : ""
-              }`}
-              onClick={() => setCurrentSlide(index)}
-            />
-          ))}
+
+          <button className="hero-nav prev" onClick={prevSlide}>
+            ‹
+          </button>
+          <button className="hero-nav next" onClick={nextSlide}>
+            ›
+          </button>
+
+          <div className="hero-dots">
+            {heroSlides.map((_, index) => (
+              <button
+                key={index}
+                className={`dot ${index === currentSlide ? "active" : ""}`}
+                onClick={() => setCurrentSlide(index)}
+              />
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Features Banner */}
-      <section className="features">
+      {/* Features Section */}
+      <section className="features-section">
         <div className="container">
-          <div className="features__grid">
-            <div className="feature__item">
-              <div className="feature__icon">🚚</div>
-              <div className="feature__content">
-                <h3>Free Shipping</h3>
-                <p>On orders over $99</p>
-              </div>
+          <div className="features-grid">
+            <div className="feature-item">
+              <div className="feature-icon">🚚</div>
+              <h3>Free Shipping</h3>
+              <p>On orders over $99</p>
             </div>
-            <div className="feature__item">
-              <div className="feature__icon">🔄</div>
-              <div className="feature__content">
-                <h3>Easy Returns</h3>
-                <p>30-day return policy</p>
-              </div>
+            <div className="feature-item">
+              <div className="feature-icon">🔄</div>
+              <h3>Easy Returns</h3>
+              <p>30-day return policy</p>
             </div>
-            <div className="feature__item">
-              <div className="feature__icon">🔒</div>
-              <div className="feature__content">
-                <h3>Secure Payment</h3>
-                <p>100% secure checkout</p>
-              </div>
+            <div className="feature-item">
+              <div className="feature-icon">🔒</div>
+              <h3>Secure Payment</h3>
+              <p>100% secure checkout</p>
             </div>
-            <div className="feature__item">
-              <div className="feature__icon">📞</div>
-              <div className="feature__content">
-                <h3>24/7 Support</h3>
-                <p>Always here to help</p>
-              </div>
+            <div className="feature-item">
+              <div className="feature-icon">📞</div>
+              <h3>24/7 Support</h3>
+              <p>Always here to help</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Categories Section */}
-      <section className="categories">
+      <section className="categories-section">
         <div className="container">
-          <div className="section__header">
-            <h2>Shop by Category</h2>
-            <p>Explore our wide range of premium products</p>
-          </div>
-          <div className="categories__grid">
+          <h2>Shop by Category</h2>
+          <div className="categories-grid">
             {categories.map((category) => (
-              <div key={category.id} className="category__card">
-                <div className="category__image">
-                  <img src={category.image} alt={category.name} />
-                  <div className="category__overlay">
-                    <span className="category__count">
-                      {category.count} items
-                    </span>
+              <div key={category.id} className="category-card">
+                <div className="category-icon">{category.icon}</div>
+                <h3>{category.name}</h3>
+                <p>{category.productCount} products</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Flash Sale Section */}
+      <section className="flash-sale-section">
+        <div className="container">
+          <div className="flash-sale-header">
+            <h2>⚡ Flash Sale</h2>
+            <div className="countdown">
+              <div className="countdown-item">
+                <span className="number">{timeLeft.days}</span>
+                <span className="label">Days</span>
+              </div>
+              <div className="countdown-item">
+                <span className="number">{timeLeft.hours}</span>
+                <span className="label">Hours</span>
+              </div>
+              <div className="countdown-item">
+                <span className="number">{timeLeft.minutes}</span>
+                <span className="label">Min</span>
+              </div>
+              <div className="countdown-item">
+                <span className="number">{timeLeft.seconds}</span>
+                <span className="label">Sec</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flash-sale-products">
+            {featuredProducts.slice(0, 4).map((product) => (
+              <div key={product.id} className="flash-product-card">
+                {product.badge && (
+                  <span className="product-badge">{product.badge}</span>
+                )}
+                <div className="product-image">
+                  <div className="placeholder-image">
+                    <span>Product Image</span>
                   </div>
                 </div>
-                <div className="category__content">
-                  <h3 className="category__name">{category.name}</h3>
-                  <button className="btn btn--outline btn--small">
-                    Shop Now
-                  </button>
+                <div className="product-info">
+                  <h4>{product.name}</h4>
+                  <div className="product-rating">
+                    {renderStars(product.rating)}
+                    <span>({product.reviews})</span>
+                  </div>
+                  <div className="product-price">
+                    <span className="current-price">${product.price}</span>
+                    {product.originalPrice && (
+                      <span className="original-price">
+                        ${product.originalPrice}
+                      </span>
+                    )}
+                  </div>
+                  <button className="add-to-cart-btn">Add to Cart</button>
                 </div>
               </div>
             ))}
@@ -296,39 +448,39 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Featured Products */}
-      <section className="featured-products">
+      {/* Featured Products Section */}
+      <section className="featured-products-section">
         <div className="container">
-          <div className="section__header">
-            <h2>Featured Products</h2>
-            <p>Handpicked items just for you</p>
-          </div>
-          <div className="products__grid">
-            {featuredProductsData.map((product) => (
-              <div key={product.id} className="product__card">
-                <div className="product__image">
-                  <img src={product.image} alt={product.name} />
-                  <div className="product__actions">
-                    <button className="action__btn">❤️</button>
-                    <button className="action__btn">👁️</button>
+          <h2>Featured Products</h2>
+          <div className="products-grid">
+            {featuredProducts.map((product) => (
+              <div key={product.id} className="product-card">
+                {product.badge && (
+                  <span className="product-badge">{product.badge}</span>
+                )}
+                <div className="product-image">
+                  <div className="placeholder-image">
+                    <span>Product Image</span>
                   </div>
-                  <div className="product__badge">Sale</div>
+                  <div className="product-overlay">
+                    <button className="quick-view-btn">Quick View</button>
+                  </div>
                 </div>
-                <div className="product__content">
-                  <h3 className="product__name">{product.name}</h3>
-                  <div className="product__rating">
-                    <span className="stars">⭐⭐⭐⭐⭐</span>
-                    <span className="rating__text">({product.reviews})</span>
+                <div className="product-info">
+                  <h4>{product.name}</h4>
+                  <div className="product-rating">
+                    {renderStars(product.rating)}
+                    <span>({product.reviews})</span>
                   </div>
-                  <div className="product__price">
-                    <span className="price__current">${product.price}</span>
-                    <span className="price__original">
-                      ${product.originalPrice}
-                    </span>
+                  <div className="product-price">
+                    <span className="current-price">${product.price}</span>
+                    {product.originalPrice && (
+                      <span className="original-price">
+                        ${product.originalPrice}
+                      </span>
+                    )}
                   </div>
-                  <button className="btn btn--primary btn--full">
-                    Add to Cart
-                  </button>
+                  <button className="add-to-cart-btn">Add to Cart</button>
                 </div>
               </div>
             ))}
@@ -336,42 +488,92 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="testimonials">
+      {/* Newsletter Section */}
+      <section className="newsletter-section">
         <div className="container">
-          <div className="section__header">
-            <h2>What Our Customers Say</h2>
-            <p>Real reviews from real customers</p>
-          </div>
-          <div className="testimonials__grid">
-            {testimonials.map((testimonial) => (
-              <div key={testimonial.id} className="testimonial__card">
-                <div className="testimonial__rating">
-                  <span className="stars">⭐⭐⭐⭐⭐</span>
-                </div>
-                <p className="testimonial__text">"{testimonial.review}"</p>
-                <div className="testimonial__author">
-                  <img src={testimonial.avatar} alt={testimonial.name} />
-                  <span className="author__name">{testimonial.name}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Newsletter */}
-      <section className="newsletter">
-        <div className="container">
-          <div className="newsletter__content">
+          <div className="newsletter-content">
             <h2>Stay Updated</h2>
-            <p>
-              Subscribe to get special offers, free giveaways, and exclusive
-              deals
-            </p>
-            <div className="newsletter__form">
+            <p>Subscribe to our newsletter and get 10% off your first order</p>
+            <div className="newsletter-form">
               <input type="email" placeholder="Enter your email address" />
-              <button className="btn btn--primary">Subscribe</button>
+              <button type="submit">Subscribe</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="testimonials-section">
+        <div className="container">
+          <h2>What Our Customers Say</h2>
+          <div className="testimonials-grid">
+            <div className="testimonial-card">
+              <div className="testimonial-rating">{renderStars(5)}</div>
+              <p>
+                "Amazing products and fast delivery! I'm very satisfied with my
+                purchase."
+              </p>
+              <div className="testimonial-author">
+                <div className="author-avatar">JD</div>
+                <div className="author-info">
+                  <h4>John Doe</h4>
+                  <span>Verified Customer</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="testimonial-card">
+              <div className="testimonial-rating">{renderStars(5)}</div>
+              <p>
+                "Great customer service and quality products. Highly
+                recommended!"
+              </p>
+              <div className="testimonial-author">
+                <div className="author-avatar">SM</div>
+                <div className="author-info">
+                  <h4>Sarah Miller</h4>
+                  <span>Verified Customer</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="testimonial-card">
+              <div className="testimonial-rating">{renderStars(4)}</div>
+              <p>
+                "Easy shopping experience and competitive prices. Will shop
+                again!"
+              </p>
+              <div className="testimonial-author">
+                <div className="author-avatar">MB</div>
+                <div className="author-info">
+                  <h4>Mike Brown</h4>
+                  <span>Verified Customer</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="stats-section">
+        <div className="container">
+          <div className="stats-grid">
+            <div className="stat-item">
+              <h3>50K+</h3>
+              <p>Happy Customers</p>
+            </div>
+            <div className="stat-item">
+              <h3>10K+</h3>
+              <p>Products</p>
+            </div>
+            <div className="stat-item">
+              <h3>99%</h3>
+              <p>Satisfaction Rate</p>
+            </div>
+            <div className="stat-item">
+              <h3>24/7</h3>
+              <p>Support</p>
             </div>
           </div>
         </div>
@@ -379,95 +581,176 @@ const HomePage = () => {
 
       {/* Footer */}
       <footer className="footer">
-        <div className="container">
-          <div className="footer__content">
+        <div className="footer__container">
+          {/* Footer Top */}
+          <div className="footer__top">
             <div className="footer__section">
-              <h3>ShopEase</h3>
-              <p>
-                Your trusted online store for quality products at great prices.
-                We're committed to providing excellent customer service and fast
-                delivery.
-              </p>
-              <div className="social__links">
-                <a href="#" className="social__link">
-                  📘
-                </a>
-                <a href="#" className="social__link">
-                  🐦
-                </a>
-                <a href="#" className="social__link">
-                  📷
-                </a>
-                <a href="#" className="social__link">
-                  💼
-                </a>
+              <div className="footer__logo">
+                <h3>
+                  Store<span>Hub</span>
+                </h3>
+                <p>
+                  Your trusted online shopping destination for quality products
+                  at great prices.
+                </p>
+                <div className="footer__social">
+                  <a href="#" className="social-link">
+                    📘
+                  </a>
+                  <a href="#" className="social-link">
+                    🐦
+                  </a>
+                  <a href="#" className="social-link">
+                    📷
+                  </a>
+                  <a href="#" className="social-link">
+                    💼
+                  </a>
+                </div>
               </div>
             </div>
+
             <div className="footer__section">
               <h4>Quick Links</h4>
               <ul>
                 <li>
-                  <a href="#about">About Us</a>
+                  <a href="/">Home</a>
                 </li>
                 <li>
-                  <a href="#contact">Contact</a>
+                  <a href="/products">Products</a>
                 </li>
                 <li>
-                  <a href="#shipping">Shipping Info</a>
+                  <a href="/categories">Categories</a>
                 </li>
                 <li>
-                  <a href="#returns">Returns</a>
+                  <a href="/deals">Special Deals</a>
                 </li>
                 <li>
-                  <a href="#faq">FAQ</a>
+                  <a href="/new-arrivals">New Arrivals</a>
                 </li>
               </ul>
             </div>
-            <div className="footer__section">
-              <h4>Categories</h4>
-              <ul>
-                <li>
-                  <a href="#electronics">Electronics</a>
-                </li>
-                <li>
-                  <a href="#clothing">Clothing</a>
-                </li>
-                <li>
-                  <a href="#home">Home & Living</a>
-                </li>
-                <li>
-                  <a href="#sports">Sports</a>
-                </li>
-                <li>
-                  <a href="#books">Books</a>
-                </li>
-              </ul>
-            </div>
+
             <div className="footer__section">
               <h4>Customer Service</h4>
               <ul>
                 <li>
-                  <a href="#help">Help Center</a>
+                  <a href="/contact">Contact Us</a>
                 </li>
                 <li>
-                  <a href="#track">Track Order</a>
+                  <a href="/faq">FAQ</a>
                 </li>
                 <li>
-                  <a href="#size-guide">Size Guide</a>
+                  <a href="/shipping">Shipping Info</a>
                 </li>
                 <li>
-                  <a href="#terms">Terms of Service</a>
+                  <a href="/returns">Returns & Exchanges</a>
                 </li>
                 <li>
-                  <a href="#privacy">Privacy Policy</a>
+                  <a href="/size-guide">Size Guide</a>
                 </li>
               </ul>
             </div>
+
+            <div className="footer__section">
+              <h4>My Account</h4>
+              <ul>
+                <li>
+                  <a href="/login">Sign In</a>
+                </li>
+                <li>
+                  <a href="/register">Create Account</a>
+                </li>
+                <li>
+                  <a href="/account">My Account</a>
+                </li>
+                <li>
+                  <a href="/orders">Order History</a>
+                </li>
+                <li>
+                  <a href="/wishlist">Wishlist</a>
+                </li>
+              </ul>
+            </div>
+
+            <div className="footer__section">
+              <h4>Company</h4>
+              <ul>
+                <li>
+                  <a href="/about">About Us</a>
+                </li>
+                <li>
+                  <a href="/careers">Careers</a>
+                </li>
+                <li>
+                  <a href="/press">Press</a>
+                </li>
+                <li>
+                  <a href="/investors">Investors</a>
+                </li>
+                <li>
+                  <a href="/sustainability">Sustainability</a>
+                </li>
+              </ul>
+            </div>
+
+            <div className="footer__section">
+              <h4>Contact Info</h4>
+              <div className="footer__contact">
+                <div className="contact-item">
+                  <span className="icon">📍</span>
+                  <p>
+                    123 Business St, Suite 100
+                    <br />
+                    City, State 12345
+                  </p>
+                </div>
+                <div className="contact-item">
+                  <span className="icon">📞</span>
+                  <p>+1 (555) 123-4567</p>
+                </div>
+                <div className="contact-item">
+                  <span className="icon">✉️</span>
+                  <p>support@storehub.com</p>
+                </div>
+              </div>
+            </div>
           </div>
+
+          {/* Footer Middle */}
+          <div className="footer__middle">
+            <div className="footer__newsletter">
+              <h4>Stay Connected</h4>
+              <p>
+                Subscribe to get special offers, free giveaways, and updates.
+              </p>
+              <div className="newsletter-signup">
+                <input type="email" placeholder="Enter your email" />
+                <button type="submit">Subscribe</button>
+              </div>
+            </div>
+
+            <div className="footer__payment">
+              <h4>We Accept</h4>
+              <div className="payment-methods">
+                <span className="payment-icon">💳</span>
+                <span className="payment-icon">🏦</span>
+                <span className="payment-icon">💰</span>
+                <span className="payment-icon">📱</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer Bottom */}
           <div className="footer__bottom">
-            <p>&copy; 2025 ShopEase. All rights reserved.</p>
-            <div className="payment__methods">
-              <span>💳 💳 💳 💳</span>
+            <div className="footer__legal">
+              <p>&copy; 2025 StoreHub. All rights reserved.</p>
+              <div className="legal-links">
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+                <a href="/cookies">Cookie Policy</a>
+                <a href="/accessibility">Accessibility</a>
+              </div>
             </div>
           </div>
         </div>

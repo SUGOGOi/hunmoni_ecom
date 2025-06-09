@@ -1,15 +1,51 @@
-export interface User {
-  user_id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone?: string;
-  password_hash: string;
-  date_of_birth?: Date;
-  gender?: string;
-  is_active: boolean;
-  email_verified: boolean;
-  phone_verified: boolean;
-  created_date: Date;
-  updated_date: Date;
-}
+import mongoose, { Document, Schema } from "mongoose";
+import { IUser, UserRole } from "../types/types.js";
+
+const UserSchema = new Schema<IUser>(
+  {
+    name: {
+      type: String,
+      required: [true, "Enter your name"],
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    phone: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: false, // for social auth users
+    },
+    role: {
+      type: String,
+      enum: Object.values(UserRole), // Allow only enum values
+      default: UserRole.CUSTOMER, // Set a default role
+    },
+    is_email_verified: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    is_phone_verified: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    googoleId: {
+      type: String,
+      required: false,
+    },
+    githubId: {
+      type: String,
+      required: false,
+    },
+  },
+  { timestamps: true }
+);
+
+export const User = mongoose.model<IUser>("user", UserSchema);

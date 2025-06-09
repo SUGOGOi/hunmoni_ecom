@@ -4,8 +4,6 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import helmet from "helmet";
-import pool from "./src/config/db.js";
-import * as UserQueries from "./src/queries/useQueries.js";
 
 dotenv.config();
 
@@ -29,13 +27,13 @@ app.use(
 );
 
 app.get("/", async (req: Request, res: Response): Promise<any> => {
-  try {
-    const users = await UserQueries.getAllUsers();
-    res.json({ success: true, users });
-  } catch (error) {
-    console.error("Error fetching users", error);
-    res.status(500).json({ success: false, error: "Internal Server Error" });
-  }
+  res.json({ success: true, message: `API working` });
 });
+
+//import routes
+import adminRoutes from "./src/routes/adminRoute.js";
+
+//use routes
+app.use("/api/admin", adminRoutes);
 
 export default app;
