@@ -1,16 +1,18 @@
 import React, { useState } from "react";
 import "./adminLogin.scss";
-
-interface LoginFormData {
-  email: string;
-  password: string;
-}
+import axios from "axios";
+import { SERVER_URL } from "../../store/store";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import type { LoginFormData } from "../../types/types";
 
 const AdminLogin: React.FC = () => {
   const [formData, setFormData] = useState<LoginFormData>({
     email: "",
     password: "",
   });
+
+  const navigateTo = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -26,22 +28,53 @@ const AdminLogin: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError("");
 
     try {
-      // Add your login logic here
-      console.log("Login attempt:", formData);
+      setIsLoading(true);
+      const response = await axios.post(
+        `${SERVER_URL}/api/admin/admin-login`,
+        {
+          email: formData.email,
+          password: formData.password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Handle successful login
-      // Example: redirect to dashboard
-      // window.location.href = '/admin/dashboard';
+      if (response.data.success === true) {
+        toast(`${response.data.message}`, {
+          // icon: "✔",
+          style: {
+            borderRadius: "13px",
+            background: "#123623",
+            color: "#16c864",
+          },
+        });
+      }
+      window.location.reload();
     } catch (error) {
-      console.log(error);
-      setError("Invalid credentials. Please try again.");
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          toast(`${error.response.data.error}`, {
+            // icon: "✔",
+            style: {
+              borderRadius: "13px",
+              background: "#3e1220",
+              color: "#ca2d44",
+            },
+          });
+        } else {
+          toast(`Server Error!`, {
+            // icon: "✔",
+            style: {
+              borderRadius: "13px",
+              background: "#3e1220",
+              color: "#ca2d44",
+            },
+          });
+        }
+      }
     } finally {
       setIsLoading(false);
     }
@@ -52,10 +85,10 @@ const AdminLogin: React.FC = () => {
       <div className="admin-login__container">
         <div className="admin-login__header">
           <div className="admin-login__logo">
-            Admin<span>Panel</span>
+            <span>E</span>-Shop
           </div>
-          <h1>Welcome Back</h1>
-          <p>Sign in to your admin account</p>
+          {/* <h2>Admin Panel</h2> */}
+          <p>Admin Panel</p>
         </div>
 
         <form className="admin-login__form" onSubmit={handleSubmit}>
@@ -88,10 +121,6 @@ const AdminLogin: React.FC = () => {
           </div>
 
           <div className="admin-login__options">
-            <label className="admin-login__checkbox">
-              <input type="checkbox" />
-              <span>Remember me</span>
-            </label>
             <a href="#" className="admin-login__forgot">
               Forgot password?
             </a>

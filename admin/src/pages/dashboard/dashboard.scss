@@ -17,18 +17,25 @@
     width: 250px;
     min-width: 250px; // Prevent shrinking
     max-width: 250px; // Prevent expanding
+    height: 100vh; // Fixed height to viewport
+    max-height: 100vh; // Prevent expanding beyond viewport
     background: #101110;
     padding: 2rem 1rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     transition: left 0.3s ease;
-    position: relative;
+    position: sticky; // Changed from relative to sticky
+    top: 0; // Stick to top of viewport
     border-right: 1px solid rgb(50, 50, 50);
     box-sizing: border-box; // Include padding in width calculation
+    overflow-y: auto; // Allow scrolling if content exceeds height
+    flex-shrink: 0; // Prevent sidebar from shrinking
 
     // Profile section - FIXED
     .profile-main {
+      flex-shrink: 0; // Prevent profile section from shrinking
+
       .profile-detail-area {
         opacity: 1;
         visibility: visible;
@@ -172,15 +179,18 @@
     // Upper section with navigation
     .upper-section {
       width: 100%;
-      height: 50%;
+      flex: 1; // Take remaining space
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       box-sizing: border-box;
+      min-height: 0; // Allow shrinking if needed
+      overflow-y: auto; // Allow scrolling in navigation if needed
 
       nav {
-        height: 80%;
+        flex: 1; // Take available space
         width: 100%;
+        overflow-y: auto; // Allow scrolling if menu items exceed space
 
         .sidebar-menu {
           width: 100%;
@@ -238,6 +248,7 @@
       left: -250px;
       top: 0;
       height: 100vh;
+      max-height: 100vh; // Ensure it doesn't exceed viewport on mobile
       z-index: 100;
       width: 250px;
       min-width: 250px;
@@ -281,174 +292,21 @@
     }
   }
 
-  // Main content area
-  &__main {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    background: #101110;
-    min-width: 0;
+  // Overlay for mobile sidebar
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    padding: 2rem;
-    gap: 1rem;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99;
 
     @media (max-width: 900px) {
-      padding: 1rem;
-      margin-left: 0;
-    }
-  }
-
-  // Navbar section
-  &__navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    width: 100%;
-    max-width: 95%;
-    padding: 1rem;
-    background: #18191a;
-    border: 1px solid rgb(50, 50, 50);
-    border-radius: 8px;
-    transition: all 0.3s ease;
-
-    &_left {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-
-      h1 {
-        margin: 0;
-        font-size: 1.5rem;
-        font-weight: 600;
+      &.active {
+        display: block;
       }
-    }
-
-    .dashboard__notice {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #2b2a2a;
-      min-width: 150px;
-      padding: 8px 12px;
-      border-radius: 8px;
-      height: 40px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-
-      &:hover {
-        background: #313131;
-      }
-
-      p {
-        font-size: 14px;
-        color: #bababa;
-        margin: 0;
-      }
-
-      .notice-icon {
-        width: 16px;
-        height: 16px;
-        margin-left: 8px;
-      }
-    }
-
-    p {
-      color: #7e7e7e;
-      margin: 0;
-    }
-
-    @media (max-width: 768px) {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 1rem;
-      padding: 1rem;
-
-      .dashboard__notice {
-        width: 100%;
-        min-width: unset;
-      }
-    }
-  }
-
-  // Stats section
-  &__stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-    width: 100%;
-    max-width: 95%;
-
-    @media (max-width: 600px) {
-      grid-template-columns: 1fr;
-      gap: 1rem;
-    }
-  }
-
-  // Orders section
-  &__orders {
-    width: 100%;
-    max-width: 95%;
-    background: #18191a;
-    border: 1px solid rgb(50, 50, 50);
-    padding: 1.5rem;
-    border-radius: 8px;
-    overflow-x: auto;
-
-    // Table styling
-    table {
-      width: 100%;
-      border-collapse: collapse;
-
-      th,
-      td {
-        padding: 12px;
-        text-align: left;
-        border-bottom: 1px solid rgb(50, 50, 50);
-      }
-
-      th {
-        background: #2b2a2a;
-        font-weight: 600;
-        color: #d87f37;
-      }
-
-      tr:hover {
-        background: rgba(255, 255, 255, 0.02);
-      }
-    }
-
-    @media (max-width: 600px) {
-      padding: 1rem;
-
-      table {
-        font-size: 14px;
-
-        th,
-        td {
-          padding: 8px 4px;
-        }
-      }
-    }
-  }
-}
-
-// Overlay for mobile sidebar
-.sidebar-overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 99;
-
-  @media (max-width: 900px) {
-    &.active {
-      display: block;
     }
   }
 }

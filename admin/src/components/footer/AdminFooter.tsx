@@ -26,7 +26,7 @@ const AdminFooter: React.FC = () => {
         </div>
 
         <div className="admin-footer__center">
-          <span className="version">v2.1.0</span>
+          <span className="version">v1.0.0</span>
         </div>
 
         <div className="admin-footer__right">

@@ -1,20 +1,33 @@
 import React, { useEffect, useState } from "react";
 import "./dashboard.scss";
-import StatCard from "../../components/dashboard/stateCard/StatCard";
-import OrdersTable from "../../components/dashboard/orderTable/OrderTable";
-import { useStore } from "../../../../client/src/store/store";
+
+import { useStore } from "../../store/store";
 import { AiOutlineHome } from "react-icons/ai";
 import { AiOutlineProduct } from "react-icons/ai";
 import { LiaShoppingCartSolid } from "react-icons/lia";
 import { BsPeople } from "react-icons/bs";
 import { IoSettingsOutline } from "react-icons/io5";
 // import toast from "react-hot-toast";
-import { FaRegBell } from "react-icons/fa";
-import AdminFooter from "../../components/footer/AdminFooter";
+import axios from "axios";
+import { SERVER_URL } from "../../store/store";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import DashboardContainer from "../../components/dashboard/dashboardContainer/DashboardContainer";
+import ProfileContainer from "../../components/dashboard/profileContainer/ProfileContainer";
+import OrderContainer from "../../components/dashboard/orderContainer/OrderContainer";
+import ProductContainer from "../../components/dashboard/productContainer/ProductContainer";
+import { RiCoupon3Line } from "react-icons/ri";
+import CustomerContainer from "../../components/dashboard/customerContainer/CustomerContainer";
+
+function deleteCookie(name: string) {
+  const expires = new Date(Date.now() - 1000).toUTCString(); // 1 second in the past
+  document.cookie = `${name}=; expires=${expires}; path=/;`;
+}
 
 const Dashboard: React.FC = () => {
+  const navigateTo = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { setActiveMenuItem, activeMenuItem } = useStore();
+  const { setActiveMenuItem, activeMenuItem, setIsLogin } = useStore();
   const [activeProfileArea, setActiveProfileArea] = useState(false);
 
   const handleProfile = () => {
@@ -28,9 +41,72 @@ const Dashboard: React.FC = () => {
     //   },
     // });
   };
+  const handleMyProfile = () => {
+    setActiveProfileArea(!activeProfileArea);
+    setActiveMenuItem("Profile");
+    // toast("Hello", {
+    //   icon: "✔",
+    //   style: {
+    //     borderRadius: "13px",
+    //     background: "#123623",
+    //     color: "#16c864",
+    //   },
+    // });
+  };
+
   useEffect(() => {
     setActiveMenuItem("Dashboard");
   }, []);
+
+  //<========================================================LOG OUT==============================================================>
+  const handleLogout = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        `${SERVER_URL}/api/admin/admin-logout`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response.data.success === true) {
+        toast(`${response.data.message}`, {
+          // icon: "✔",
+          style: {
+            borderRadius: "13px",
+            background: "#123623",
+            color: "#16c864",
+          },
+        });
+        setIsLogin(false);
+        deleteCookie("token");
+      }
+
+      navigateTo("/");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          toast(`${error.response.data.error}`, {
+            // icon: "✔",
+            style: {
+              borderRadius: "13px",
+              background: "#3e1220",
+              color: "#ca2d44",
+            },
+          });
+        } else {
+          toast(`Server Error!`, {
+            // icon: "✔",
+            style: {
+              borderRadius: "13px",
+              background: "#3e1220",
+              color: "#ca2d44",
+            },
+          });
+        }
+      }
+    }
+  };
 
   return (
     <div className="dashboard">
@@ -93,6 +169,18 @@ const Dashboard: React.FC = () => {
                 <BsPeople size={24} />
                 Customers
               </li>
+
+              <li
+                className={`menu-item ${
+                  activeMenuItem === "Coupons" ? "active" : ""
+                }`}
+                onClick={() => {
+                  setActiveMenuItem("Coupons");
+                }}
+              >
+                <RiCoupon3Line size={24} />
+                Coupons
+              </li>
               <li
                 className={`menu-item ${
                   activeMenuItem === "Settings" ? "active" : ""
@@ -120,10 +208,10 @@ const Dashboard: React.FC = () => {
               <p>Signed in as</p>
               <p>sumsumgogoi51@gmail.com</p>
             </div>
-            <div className="my-profile">
+            <div className="my-profile" onClick={handleMyProfile}>
               <p>My Profile</p>
             </div>
-            <div className="log-out">
+            <div className="log-out" onClick={handleLogout}>
               <p>Log Out</p>
             </div>
           </div>
@@ -145,29 +233,11 @@ const Dashboard: React.FC = () => {
           ☰
         </button>
       )}
-      <main className="dashboard__main">
-        <header className="dashboard__navbar">
-          <div className="dashboard__navbar_left">
-            <h2>Dashboard</h2>
-            <p>Manage your products, orders, etc</p>
-          </div>
-          <div className="dashboard__notice">
-            <FaRegBell size={21} />
-            <p>View notice board</p>
-          </div>
-        </header>
-        <section className="dashboard__stats">
-          <StatCard title="Total Sales" value="$12,340" delta="+5%" />
-          <StatCard title="Orders" value="1,245" delta="+2%" />
-          <StatCard title="Customers" value="820" delta="+1.2%" />
-          <StatCard title="Refunds" value="12" delta="-0.5%" />
-        </section>
-        <section className="dashboard__orders">
-          <h2>Recent Orders</h2>
-          <OrdersTable />
-        </section>
-        <AdminFooter />
-      </main>
+      {activeMenuItem === "Dashboard" && <DashboardContainer />}
+      {activeMenuItem === "Profile" && <ProfileContainer />}
+      {activeMenuItem === "Orders" && <OrderContainer />}
+      {activeMenuItem === "Products" && <ProductContainer />}
+      {activeMenuItem === "Customers" && <CustomerContainer />}
     </div>
   );
 };

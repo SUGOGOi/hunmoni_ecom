@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import mongoose, { Document } from "mongoose";
 
 // FOR USER MODEL
@@ -32,4 +33,9 @@ export interface UserTypeInEmail {
   email: string;
   _id: string | any;
   name: string;
+}
+
+export interface JwtPayloadCustom extends jwt.JwtPayload {
+  _id: string;
+  email: string;
 }

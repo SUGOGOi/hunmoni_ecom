@@ -1,24 +1,33 @@
 import React from "react";
-import "./statcard.scss";
+import "./StatCard.scss";
 
 interface StatCardProps {
   title: string;
   value: string;
   delta: string;
+  icon?: React.ReactNode;
+  trend?: "up" | "down";
 }
 
-const StatCard: React.FC<StatCardProps> = ({ title, value, delta }) => (
-  <div className="statcard">
-    <div className="statcard__title">{title}</div>
-    <div className="statcard__value">{value}</div>
-    <div
-      className={`statcard__delta ${
-        delta.startsWith("+") ? "statcard__delta--up" : "statcard__delta--down"
-      }`}
-    >
-      {delta}
+const StatCard: React.FC<StatCardProps> = ({
+  title,
+  value,
+  delta,
+  icon,
+  trend,
+}) => {
+  return (
+    <div className="stat-card">
+      <div className="stat-card__header">
+        <h3 className="stat-card__title">{title}</h3>
+        <div className={`stat-card__icon ${trend}`}>{icon}</div>
+      </div>
+      <div className="stat-card__content">
+        <div className="stat-card__value">{value}</div>
+        <div className={`stat-card__delta ${trend}`}>{delta}</div>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default StatCard;

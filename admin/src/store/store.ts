@@ -9,5 +9,11 @@ export const useStore = create<useStoreType>()(
     // for active menu (admin sidebar)
     activeMenuItem: null,
     setActiveMenuItem: (change) => set(() => ({ activeMenuItem: change })),
+
+    //for login check
+    isLogin: null,
+    setIsLogin: (change) => set(() => ({ isLogin: change })),
   }))
 );
+
+export const SERVER_URL = "http://localhost:4000";
