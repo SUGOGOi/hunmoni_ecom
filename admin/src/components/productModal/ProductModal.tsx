@@ -1,27 +1,53 @@
 import React, { useState, useEffect } from "react";
-import { FaTimes, FaSave, FaImage, FaPlus } from "react-icons/fa";
+import { FaTimes, FaImage, FaPlus, FaSave } from "react-icons/fa";
 import "./ProductModal.scss";
 
 interface Product {
   id: string;
   name: string;
   category: string;
-  price: string;
+  subcategory: string;
+  brand: string;
+  price: number;
   stock: number;
-  status: string;
-  images: string[];
-  description: string;
   sku: string;
-  dateAdded: string;
+  images: string[];
+  status: "active" | "inactive" | "discontinued";
+  description: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface ProductModalProps {
   isOpen: boolean;
-  mode: "view" | "edit" | "add";
-  product: Product | null;
+  mode: "add" | "edit" | "view";
+  product?: Product | null;
   onClose: () => void;
-  onSave: (product: Product) => void;
+  onSave: (productData: Partial<Product>) => void;
   onDelete?: (productId: string) => void;
+}
+
+interface FormData {
+  id: string;
+  name: string;
+  sku: string;
+  category: string;
+  subcategory: string;
+  brand: string;
+  price: string;
+  stock: number;
+  status: string;
+  description: string;
+  images: string[];
+  dateAdded: string;
+}
+
+interface FormErrors {
+  name?: string;
+  sku?: string;
+  price?: string;
+  stock?: string;
+  description?: string;
 }
 
 const ProductModal: React.FC<ProductModalProps> = ({
@@ -32,150 +58,143 @@ const ProductModal: React.FC<ProductModalProps> = ({
   onSave,
   onDelete,
 }) => {
-  const [formData, setFormData] = useState<Product>({
+  const [formData, setFormData] = useState<FormData>({
     id: "",
     name: "",
-    category: "Electronics",
+    sku: "",
+    category: "electronics",
+    subcategory: "",
+    brand: "",
     price: "",
     stock: 0,
     status: "active",
-    images: [],
     description: "",
-    sku: "",
-    dateAdded: new Date().toISOString().split("T")[0],
+    images: [],
+    dateAdded: "",
   });
 
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [errors, setErrors] = useState<FormErrors>({});
   const [mainImageIndex, setMainImageIndex] = useState(0);
 
+  // Initialize form data when modal opens or product changes
   useEffect(() => {
     if (isOpen) {
-      if (mode === "add") {
+      if (product && (mode === "edit" || mode === "view")) {
         setFormData({
-          id: `PRD-${Date.now().toString().slice(-3)}`,
+          id: product.id,
+          name: product.name,
+          sku: product.sku,
+          category: product.category,
+          subcategory: product.subcategory || "",
+          brand: product.brand,
+          price: product.price.toString(),
+          stock: product.stock,
+          status: product.status,
+          description: product.description || "",
+          images: product.images || [],
+          dateAdded: new Date(product.createdAt).toLocaleDateString(),
+        });
+      } else {
+        // Reset form for add mode
+        setFormData({
+          id: "",
           name: "",
-          category: "Electronics",
+          sku: "",
+          category: "electronics",
+          subcategory: "",
+          brand: "",
           price: "",
           stock: 0,
           status: "active",
-          images: [],
           description: "",
-          sku: "",
-          dateAdded: new Date().toISOString().split("T")[0],
+          images: [],
+          dateAdded: "",
         });
-        setMainImageIndex(0);
-      } else if (product) {
-        setFormData(product);
-        setMainImageIndex(0);
       }
       setErrors({});
+      setMainImageIndex(0);
     }
-  }, [isOpen, mode, product]);
+  }, [isOpen, product, mode]);
 
-  const handleInputChange = (
-    field: keyof Product,
-    value: string | number | string[]
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+  // Get subcategories based on selected category
+  const getSubcategories = (category: string) => {
+    const subcategories: Record<
+      string,
+      Array<{ value: string; label: string }>
+    > = {
+      electronics: [
+        { value: "smartphones", label: "Smartphones" },
+        { value: "laptops", label: "Laptops" },
+        { value: "tablets", label: "Tablets" },
+        { value: "audio", label: "Audio" },
+      ],
+      accessories: [
+        { value: "cases", label: "Cases" },
+        { value: "chargers", label: "Chargers" },
+        { value: "cables", label: "Cables" },
+      ],
+      office: [
+        { value: "furniture", label: "Furniture" },
+        { value: "supplies", label: "Supplies" },
+        { value: "equipment", label: "Equipment" },
+      ],
+      clothing: [
+        { value: "shirts", label: "Shirts" },
+        { value: "pants", label: "Pants" },
+        { value: "shoes", label: "Shoes" },
+      ],
+      home: [
+        { value: "kitchen", label: "Kitchen" },
+        { value: "bedroom", label: "Bedroom" },
+        { value: "garden", label: "Garden" },
+      ],
+    };
+    return subcategories[category] || [];
+  };
 
-    if (errors[field]) {
-      setErrors((prev) => ({
-        ...prev,
-        [field]: "",
-      }));
+  const handleInputChange = (field: keyof FormData, value: unknown) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+
+    // Clear error when user starts typing
+    if (errors[field as keyof FormErrors]) {
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
+
+    // Reset subcategory when category changes
+    if (field === "category") {
+      setFormData((prev) => ({ ...prev, subcategory: "" }));
     }
   };
 
-  const validateForm = () => {
-    const newErrors: { [key: string]: string } = {};
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
 
-    if (!formData.name.trim()) newErrors.name = "Product name is required";
-    if (!formData.price.trim()) newErrors.price = "Price is required";
-    if (!formData.sku.trim()) newErrors.sku = "SKU is required";
-    if (!formData.description.trim())
-      newErrors.description = "Description is required";
-    if (formData.stock < 0) newErrors.stock = "Stock cannot be negative";
+    const remainingSlots = 5 - formData.images.length;
+    const filesToProcess = Array.from(files).slice(0, remainingSlots);
 
-    const priceRegex = /^\$?\d+(\.\d{2})?$/;
-    if (formData.price && !priceRegex.test(formData.price)) {
-      newErrors.price = "Invalid price format (e.g., $99.99 or 99.99)";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSave = () => {
-    if (validateForm()) {
-      const processedData = {
-        ...formData,
-        price: formData.price.startsWith("$")
-          ? formData.price
-          : `$${formData.price}`,
+    filesToProcess.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          setFormData((prev) => ({
+            ...prev,
+            images: [...prev.images, event.target!.result as string],
+          }));
+        }
       };
-      onSave(processedData);
-      onClose();
-    }
-  };
-
-  const handleDelete = () => {
-    if (onDelete && product) {
-      if (window.confirm("Are you sure you want to delete this product?")) {
-        onDelete(product.id);
-        onClose();
-      }
-    }
-  };
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files) {
-      const fileArray = Array.from(files);
-      const remainingSlots = 5 - formData.images.length;
-      const filesToProcess = fileArray.slice(0, remainingSlots);
-
-      if (fileArray.length > remainingSlots) {
-        alert(
-          `You can only add ${remainingSlots} more image(s). Maximum 5 images allowed.`
-        );
-      }
-
-      const newImages: string[] = [];
-      let processedCount = 0;
-
-      filesToProcess.forEach((file) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          if (e.target?.result) {
-            newImages.push(e.target.result as string);
-            processedCount++;
-
-            if (processedCount === filesToProcess.length) {
-              setFormData((prev) => ({
-                ...prev,
-                images: [...prev.images, ...newImages],
-              }));
-            }
-          }
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-
-    event.target.value = "";
+      reader.readAsDataURL(file);
+    });
   };
 
   const handleRemoveImage = (index: number) => {
-    const newImages = formData.images.filter((_, i) => i !== index);
     setFormData((prev) => ({
       ...prev,
-      images: newImages,
+      images: prev.images.filter((_, i) => i !== index),
     }));
 
-    if (index === mainImageIndex) {
+    // Adjust main image index if necessary
+    if (index === mainImageIndex && formData.images.length > 1) {
       setMainImageIndex(0);
     } else if (index < mainImageIndex) {
       setMainImageIndex((prev) => prev - 1);
@@ -184,6 +203,69 @@ const ProductModal: React.FC<ProductModalProps> = ({
 
   const handleSetMainImage = (index: number) => {
     setMainImageIndex(index);
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Product name is required";
+    }
+
+    if (!formData.sku.trim()) {
+      newErrors.sku = "SKU is required";
+    }
+
+    if (!formData.price.trim()) {
+      newErrors.price = "Price is required";
+    } else if (
+      isNaN(parseFloat(formData.price)) ||
+      parseFloat(formData.price) <= 0
+    ) {
+      newErrors.price = "Please enter a valid price";
+    }
+
+    if (formData.stock < 0) {
+      newErrors.stock = "Stock cannot be negative";
+    }
+
+    if (!formData.description.trim()) {
+      newErrors.description = "Description is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSave = () => {
+    if (!validateForm()) return;
+
+    const productData: Partial<Product> = {
+      name: formData.name.trim(),
+      sku: formData.sku.trim(),
+      category: formData.category,
+      subcategory: formData.subcategory,
+      brand: formData.brand,
+      price: parseFloat(formData.price),
+      stock: formData.stock,
+      status: formData.status as "active" | "inactive" | "discontinued",
+      description: formData.description.trim(),
+      images: formData.images,
+    };
+
+    onSave(productData);
+  };
+
+  const handleDelete = () => {
+    if (product && onDelete) {
+      if (
+        window.confirm(
+          "Are you sure you want to delete this product? This action cannot be undone."
+        )
+      ) {
+        onDelete(product.id);
+      }
+    }
   };
 
   if (!isOpen) return null;
@@ -314,7 +396,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
 
                 <div className="form__row">
                   <div className="form__field">
-                    <label>Category</label>
+                    <label>Category *</label>
                     {mode === "view" ? (
                       <span className="form__value">{formData.category}</span>
                     ) : (
@@ -324,18 +406,64 @@ const ProductModal: React.FC<ProductModalProps> = ({
                           handleInputChange("category", e.target.value)
                         }
                       >
-                        <option value="Electronics">Electronics</option>
-                        <option value="Accessories">Accessories</option>
-                        <option value="Office">Office</option>
-                        <option value="Home">Home</option>
-                        <option value="Sports">Sports</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="accessories">Accessories</option>
+                        <option value="office">Office</option>
+                        <option value="clothing">Clothing</option>
+                        <option value="home">Home & Garden</option>
+                      </select>
+                    )}
+                  </div>
+                  <div className="form__field">
+                    <label>Subcategory</label>
+                    {mode === "view" ? (
+                      <span className="form__value">
+                        {formData.subcategory}
+                      </span>
+                    ) : (
+                      <select
+                        value={formData.subcategory}
+                        onChange={(e) =>
+                          handleInputChange("subcategory", e.target.value)
+                        }
+                      >
+                        <option value="">Select subcategory</option>
+                        {getSubcategories(formData.category).map((sub) => (
+                          <option key={sub.value} value={sub.value}>
+                            {sub.label}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+                </div>
+
+                <div className="form__row">
+                  <div className="form__field">
+                    <label>Brand</label>
+                    {mode === "view" ? (
+                      <span className="form__value">{formData.brand}</span>
+                    ) : (
+                      <select
+                        value={formData.brand}
+                        onChange={(e) =>
+                          handleInputChange("brand", e.target.value)
+                        }
+                      >
+                        <option value="">Select brand</option>
+                        <option value="apple">Apple</option>
+                        <option value="samsung">Samsung</option>
+                        <option value="sony">Sony</option>
+                        <option value="nike">Nike</option>
+                        <option value="adidas">Adidas</option>
+                        <option value="generic">Generic</option>
                       </select>
                     )}
                   </div>
                   <div className="form__field">
                     <label>Price *</label>
                     {mode === "view" ? (
-                      <span className="form__value">{formData.price}</span>
+                      <span className="form__value">${formData.price}</span>
                     ) : (
                       <>
                         <input
@@ -344,7 +472,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                           onChange={(e) =>
                             handleInputChange("price", e.target.value)
                           }
-                          placeholder="$99.99"
+                          placeholder="99.99"
                         />
                         {errors.price && (
                           <span className="form__error">{errors.price}</span>
@@ -356,7 +484,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
 
                 <div className="form__row">
                   <div className="form__field">
-                    <label>Stock Quantity</label>
+                    <label>Stock Quantity *</label>
                     {mode === "view" ? (
                       <span className="form__value">{formData.stock}</span>
                     ) : (
@@ -391,6 +519,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                       >
                         <option value="active">Active</option>
                         <option value="inactive">Inactive</option>
+                        <option value="discontinued">Discontinued</option>
                       </select>
                     )}
                   </div>

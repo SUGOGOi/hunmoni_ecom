@@ -2,11 +2,10 @@ import React, { useEffect, useState } from "react";
 import "./dashboard.scss";
 
 import { useStore } from "../../store/store";
-import { AiOutlineHome } from "react-icons/ai";
+import { AiOutlineDashboard, AiOutlineHome } from "react-icons/ai";
 import { AiOutlineProduct } from "react-icons/ai";
 import { LiaShoppingCartSolid } from "react-icons/lia";
 import { BsPeople } from "react-icons/bs";
-import { IoSettingsOutline } from "react-icons/io5";
 // import toast from "react-hot-toast";
 import axios from "axios";
 import { SERVER_URL } from "../../store/store";
@@ -18,6 +17,10 @@ import OrderContainer from "../../components/dashboard/orderContainer/OrderConta
 import ProductContainer from "../../components/dashboard/productContainer/ProductContainer";
 import { RiCoupon3Line } from "react-icons/ri";
 import CustomerContainer from "../../components/dashboard/customerContainer/CustomerContainer";
+import CouponContainer from "../../components/couponContainer/CouponContainer";
+import { MdCategory, MdOutlineReviews } from "react-icons/md";
+import ReviewContainer from "../../components/reviewContainer/ReviewContainer";
+import CategoryContainer from "../../components/dashboard/categoryContainer/CategoryContainer";
 
 function deleteCookie(name: string) {
   const expires = new Date(Date.now() - 1000).toUTCString(); // 1 second in the past
@@ -27,7 +30,8 @@ function deleteCookie(name: string) {
 const Dashboard: React.FC = () => {
   const navigateTo = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { setActiveMenuItem, activeMenuItem, setIsLogin } = useStore();
+  const { setActiveMenuItem, activeMenuItem, setIsLogin, admin, setAdmin } =
+    useStore();
   const [activeProfileArea, setActiveProfileArea] = useState(false);
 
   const handleProfile = () => {
@@ -41,17 +45,59 @@ const Dashboard: React.FC = () => {
     //   },
     // });
   };
-  const handleMyProfile = () => {
+  const handleMyProfile = async () => {
     setActiveProfileArea(!activeProfileArea);
     setActiveMenuItem("Profile");
-    // toast("Hello", {
-    //   icon: "✔",
-    //   style: {
-    //     borderRadius: "13px",
-    //     background: "#123623",
-    //     color: "#16c864",
-    //   },
-    // });
+
+    setTimeout(async () => {
+      try {
+        const response = await axios.get(
+          `${SERVER_URL}/api/admin/get-profile-data`,
+          {
+            withCredentials: true,
+          }
+        );
+
+        if (response.data.success === true) {
+          console.log(response.data.admin);
+          setAdmin(response.data.admin);
+          toast(`${response.data.message}`, {
+            // icon: "✔",
+            style: {
+              borderRadius: "13px",
+              background: "#123623",
+              color: "#16c864",
+            },
+          });
+        }
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          if (error.response) {
+            toast(`${error.response.data.error}`, {
+              // icon: "✔",
+              style: {
+                borderRadius: "13px",
+                background: "#3e1220",
+                color: "#ca2d44",
+              },
+            });
+          } else {
+            toast(`Server Error!`, {
+              // icon: "✔",
+              style: {
+                borderRadius: "13px",
+                background: "#3e1220",
+                color: "#ca2d44",
+              },
+            });
+          }
+        }
+      }
+    }, 3000);
+
+    if (admin !== null) {
+      return;
+    }
   };
 
   useEffect(() => {
@@ -133,7 +179,7 @@ const Dashboard: React.FC = () => {
                   setActiveMenuItem("Dashboard");
                 }}
               >
-                <AiOutlineHome size={24} />
+                <AiOutlineDashboard size={24} />
                 Dashboard
               </li>
               <li
@@ -169,7 +215,6 @@ const Dashboard: React.FC = () => {
                 <BsPeople size={24} />
                 Customers
               </li>
-
               <li
                 className={`menu-item ${
                   activeMenuItem === "Coupons" ? "active" : ""
@@ -183,14 +228,37 @@ const Dashboard: React.FC = () => {
               </li>
               <li
                 className={`menu-item ${
-                  activeMenuItem === "Settings" ? "active" : ""
+                  activeMenuItem === "HomePage" ? "active" : ""
                 }`}
                 onClick={() => {
-                  setActiveMenuItem("Settings");
+                  setActiveMenuItem("HomePage");
                 }}
               >
-                <IoSettingsOutline size={24} />
-                Settings
+                <AiOutlineHome size={24} />
+                Home Page
+              </li>
+              <li
+                className={`menu-item ${
+                  activeMenuItem === "Reviews" ? "active" : ""
+                }`}
+                onClick={() => {
+                  setActiveMenuItem("Reviews");
+                }}
+              >
+                <MdOutlineReviews size={24} />
+                Reviews
+              </li>
+
+              <li
+                className={`menu-item ${
+                  activeMenuItem === "Categories" ? "active" : ""
+                }`}
+                onClick={() => {
+                  setActiveMenuItem("Categories");
+                }}
+              >
+                <MdCategory size={24} />
+                Categories
               </li>
             </ul>
           </nav>
@@ -238,6 +306,9 @@ const Dashboard: React.FC = () => {
       {activeMenuItem === "Orders" && <OrderContainer />}
       {activeMenuItem === "Products" && <ProductContainer />}
       {activeMenuItem === "Customers" && <CustomerContainer />}
+      {activeMenuItem === "Coupons" && <CouponContainer />}
+      {activeMenuItem === "Reviews" && <ReviewContainer />}
+      {activeMenuItem === "Categories" && <CategoryContainer />}
     </div>
   );
 };

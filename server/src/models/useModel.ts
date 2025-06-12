@@ -20,6 +20,7 @@ const UserSchema = new Schema<IUser>(
     password: {
       type: String,
       required: false, // for social auth users
+      select: false,
     },
     role: {
       type: String,

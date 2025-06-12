@@ -13,6 +13,10 @@ export const useStore = create<useStoreType>()(
     //for login check
     isLogin: null,
     setIsLogin: (change) => set(() => ({ isLogin: change })),
+
+    //admin data
+    admin: null,
+    setAdmin: (change) => set(() => ({ admin: change })),
   }))
 );
 

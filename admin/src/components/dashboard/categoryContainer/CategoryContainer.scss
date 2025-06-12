@@ -1,4 +1,4 @@
-.coupons__main {
+.categories__main {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -17,8 +17,7 @@
   }
 }
 
-// Navbar section
-.coupons__navbar {
+.categories__navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -30,7 +29,7 @@
   transition: all 0.3s ease;
   flex-shrink: 0;
 
-  .coupons__navbar_left {
+  .categories__navbar_left {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -49,12 +48,7 @@
     }
   }
 
-  .coupons__actions {
-    display: flex;
-    gap: 0.5rem;
-  }
-
-  .coupons__add-btn {
+  .categories__add-btn {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -82,15 +76,14 @@
     gap: 1rem;
     padding: 1rem;
 
-    .coupons__actions {
+    .categories__actions {
       width: 100%;
       justify-content: flex-end;
     }
   }
 }
 
-// Filters section
-.coupons__filters {
+.categories__filters {
   display: flex;
   gap: 1rem;
   width: 100%;
@@ -98,7 +91,7 @@
   margin-bottom: 1rem;
   flex-shrink: 0;
 
-  .coupons__search {
+  .categories__search {
     position: relative;
     flex: 1;
     max-width: 400px;
@@ -134,7 +127,7 @@
     }
   }
 
-  .coupons__filter {
+  .categories__filter {
     min-width: 150px;
 
     select {
@@ -165,14 +158,13 @@
     flex-direction: column;
     gap: 0.5rem;
 
-    .coupons__search {
+    .categories__search {
       max-width: none;
     }
   }
 }
 
-// Content section
-.coupons__content {
+.categories__content {
   width: 100%;
   max-width: 95%;
   flex: 1;
@@ -181,7 +173,7 @@
   overflow: hidden;
 }
 
-.coupons__table-container {
+.categories__table-container {
   background: #18191a;
   border: 1px solid rgb(50, 50, 50);
   border-radius: 8px;
@@ -189,10 +181,10 @@
   flex: 1;
 }
 
-.coupons__table {
+.categories__table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 1000px;
+  min-width: 900px;
 
   th,
   td {
@@ -214,31 +206,21 @@
     background: rgba(255, 255, 255, 0.02);
   }
 
-  .coupon-code {
-    font-family: monospace;
-    color: #d87f37;
-    font-weight: 600;
-    font-size: 0.9rem;
-  }
-
-  .coupon-description {
-    max-width: 200px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .coupon-type {
+  .category-type {
     display: flex;
     align-items: center;
     gap: 0.5rem;
 
     .type-icon {
-      &.percentage {
+      &.category {
         color: #17a2b8;
       }
 
-      &.fixed {
+      &.subcategory {
+        color: #ffc107;
+      }
+
+      &.brand {
         color: #28a745;
       }
     }
@@ -249,34 +231,21 @@
     }
   }
 
-  .coupon-value {
+  .category-name {
     font-weight: 600;
-    color: #28a745;
+    color: #ffffff;
   }
 
-  .usage-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
+  .category-description {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
-    .usage-count {
-      font-size: 0.85rem;
-      color: #bababa;
-    }
-
-    .usage-bar {
-      width: 60px;
-      height: 4px;
-      background: #2b2a2a;
-      border-radius: 2px;
-      overflow: hidden;
-
-      .usage-progress {
-        height: 100%;
-        background: #d87f37;
-        transition: width 0.3s ease;
-      }
-    }
+  .product-count {
+    font-weight: 600;
+    color: #d87f37;
   }
 
   .status {
@@ -294,11 +263,6 @@
     &.status-inactive {
       background: rgba(108, 117, 125, 0.2);
       color: #6c757d;
-    }
-
-    &.status-expired {
-      background: rgba(220, 53, 69, 0.2);
-      color: #dc3545;
     }
   }
 
@@ -346,8 +310,7 @@
   }
 }
 
-// Pagination
-.coupons__pagination {
+.categories__pagination {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -385,7 +348,7 @@
 }
 
 @media (max-width: 600px) {
-  .coupons__table {
+  .categories__table {
     th,
     td {
       padding: 8px 4px;

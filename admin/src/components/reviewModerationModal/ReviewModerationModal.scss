@@ -1,0 +1,118 @@
+.review-modal__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  height: 100dvh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.review-modal__container {
+  background: #18191a;
+  border: 1px solid rgb(50, 50, 50);
+  border-radius: 8px;
+  width: 100%;
+  max-width: 420px;
+  max-height: 96dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+.review-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid rgb(50, 50, 50);
+  background: #1f2021;
+  flex-shrink: 0;
+
+  h3 {
+    margin: 0;
+    font-size: 1.07rem;
+    font-weight: 600;
+    color: #fff;
+  }
+  .review-modal__close {
+    background: none;
+    border: none;
+    color: #bababa;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background 0.2s;
+    &:hover {
+      background: #2b2a2a;
+      color: #fff;
+    }
+  }
+}
+
+.review-modal__content {
+  flex: 1 1 0%;
+  overflow-y: auto;
+  padding: 1rem 1.2rem;
+  min-height: 0;
+  background: #18191a;
+}
+
+.review-details {
+  margin-bottom: 1.2rem;
+  div {
+    margin-bottom: 0.5rem;
+  }
+  .review-rating {
+    margin-bottom: 0.5rem;
+  }
+  .review-comment {
+    background: #232323;
+    border-radius: 5px;
+    padding: 0.7rem;
+    color: #fff;
+    font-size: 0.97rem;
+    margin-top: 0.3rem;
+  }
+}
+
+.review-moderation-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  .modal-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 7px 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.93rem;
+    font-weight: 500;
+    transition: background 0.2s;
+    &--approve {
+      background: #28a745;
+      color: #fff;
+      &:hover {
+        background: #218838;
+      }
+    }
+    &--disapprove {
+      background: #dc3545;
+      color: #fff;
+      &:hover {
+        background: #c82333;
+      }
+    }
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}
