@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { User } from "../models/useModel.js";
+import { User } from "../models/userModel.js";
 import { JwtPayloadCustom } from "../types/types.js";
 
 export const isTokenPresent = async (
@@ -26,7 +26,15 @@ export const isTokenPresent = async (
       process.env.JWT_SECRET
     ) as JwtPayloadCustom;
 
-    const user = await User.findById(decoded._id);
+    const user = await User.findById(decoded._id).select("_id");
+    // console.log(user);
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        error: `Invalid token`,
+      });
+    }
 
     return res.status(200).json({ success: true, isLogin: true });
   } catch (error) {

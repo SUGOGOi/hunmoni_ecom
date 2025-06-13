@@ -5,8 +5,14 @@ const categorySchema = new Schema<ICategory>(
   {
     category: {
       type: String,
-      required: true,
+      required: false,
     },
+
+    subCategory: {
+      type: String,
+      required: false,
+    },
+
     parentCategoryId: {
       type: mongoose.Schema.ObjectId,
       required: false,

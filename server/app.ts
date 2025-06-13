@@ -35,8 +35,10 @@ app.get("/", async (req: Request, res: Response): Promise<any> => {
 
 //import routes
 import adminRoutes from "./src/routes/adminRoute.js";
+import categoryAndBrandRoutes from "./src/routes/categoryAndBrandRoute.js";
 
 //use routes
 app.use("/api/admin", adminRoutes);
+app.use("/api/category-brand", categoryAndBrandRoutes);
 
 export default app;
