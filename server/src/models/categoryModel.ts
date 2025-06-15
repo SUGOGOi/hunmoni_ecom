@@ -7,17 +7,6 @@ const categorySchema = new Schema<ICategory>(
       type: String,
       required: false,
     },
-
-    subCategory: {
-      type: String,
-      required: false,
-    },
-
-    parentCategoryId: {
-      type: mongoose.Schema.ObjectId,
-      required: false,
-      ref: "category",
-    },
   },
   {
     timestamps: true,

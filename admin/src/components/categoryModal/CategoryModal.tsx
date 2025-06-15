@@ -18,6 +18,8 @@ interface Category {
   status: "active" | "inactive";
   createdDate: string;
   productCount: number;
+  associatedBrands?: string[]; // For subcategories
+  associatedSubcategories?: string[]; // For brands
 }
 
 interface CategoryModalProps {
@@ -25,6 +27,7 @@ interface CategoryModalProps {
   mode: "add" | "edit" | "view";
   category: Category | null;
   parentCategories: Category[];
+  allCategories: Category[]; // All categories including subcategories and brands
   onClose: () => void;
   onSave: (category: Category) => void;
 }
@@ -34,6 +37,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
   mode,
   category,
   parentCategories,
+  allCategories,
   onClose,
   onSave,
 }) => {
@@ -45,6 +49,8 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
     status: "active",
     createdDate: new Date().toISOString().split("T")[0],
     productCount: 0,
+    associatedBrands: [],
+    associatedSubcategories: [],
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -65,15 +71,24 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
           status: "active",
           createdDate: new Date().toISOString().split("T")[0],
           productCount: 0,
+          associatedBrands: [],
+          associatedSubcategories: [],
         });
       } else if (category) {
-        setFormData(category);
+        setFormData({
+          ...category,
+          associatedBrands: category.associatedBrands || [],
+          associatedSubcategories: category.associatedSubcategories || [],
+        });
       }
       setErrors({});
     }
   }, [isOpen, mode, category]);
 
-  const handleInputChange = (field: keyof Category, value: string) => {
+  const handleInputChange = (
+    field: keyof Category,
+    value: string | string[]
+  ) => {
     if (field === "type") {
       const typePrefix = {
         category: "CAT",
@@ -91,6 +106,9 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
             : prev.id,
         parentId: value === "category" ? undefined : prev.parentId,
         parentName: value === "category" ? undefined : prev.parentName,
+        associatedBrands: value === "subcategory" ? prev.associatedBrands : [],
+        associatedSubcategories:
+          value === "brand" ? prev.associatedSubcategories : [],
       }));
     } else if (field === "parentId") {
       const parent = parentCategories.find((p) => p.id === value);
@@ -112,6 +130,16 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
         [field]: "",
       }));
     }
+  };
+
+  const handleMultiSelectChange = (
+    field: "associatedBrands" | "associatedSubcategories",
+    selectedIds: string[]
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: selectedIds,
+    }));
   };
 
   const validateForm = () => {
@@ -146,6 +174,20 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
       default:
         return null;
     }
+  };
+
+  // Get available brands for subcategory selection
+  const getAvailableBrands = () => {
+    return allCategories.filter(
+      (cat) => cat.type === "brand" && cat.status === "active"
+    );
+  };
+
+  // Get available subcategories for brand selection
+  const getAvailableSubcategories = () => {
+    return allCategories.filter(
+      (cat) => cat.type === "subcategory" && cat.status === "active"
+    );
   };
 
   if (!isOpen) return null;
@@ -304,6 +346,127 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
                 </>
               )}
             </div>
+
+            {/* Associated Brands for Subcategories */}
+            {formData.type === "subcategory" && (
+              <div className="form__field">
+                <label>Associated Brands</label>
+                {mode === "view" ? (
+                  <div className="associated-items">
+                    {formData.associatedBrands &&
+                    formData.associatedBrands.length > 0 ? (
+                      formData.associatedBrands.map((brandId) => {
+                        const brand = allCategories.find(
+                          (cat) => cat.id === brandId
+                        );
+                        return brand ? (
+                          <span key={brandId} className="associated-tag">
+                            <FaCertificate /> {brand.name}
+                          </span>
+                        ) : null;
+                      })
+                    ) : (
+                      <span className="form__value">No brands associated</span>
+                    )}
+                  </div>
+                ) : (
+                  <div className="multi-select">
+                    {getAvailableBrands().map((brand) => (
+                      <label key={brand.id} className="checkbox-item">
+                        <input
+                          type="checkbox"
+                          checked={
+                            formData.associatedBrands?.includes(brand.id) ||
+                            false
+                          }
+                          onChange={(e) => {
+                            const currentBrands =
+                              formData.associatedBrands || [];
+                            if (e.target.checked) {
+                              handleMultiSelectChange("associatedBrands", [
+                                ...currentBrands,
+                                brand.id,
+                              ]);
+                            } else {
+                              handleMultiSelectChange(
+                                "associatedBrands",
+                                currentBrands.filter((id) => id !== brand.id)
+                              );
+                            }
+                          }}
+                        />
+                        <span className="checkbox-label">
+                          <FaCertificate /> {brand.name}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Associated Subcategories for Brands */}
+            {formData.type === "brand" && (
+              <div className="form__field">
+                <label>Associated Subcategories</label>
+                {mode === "view" ? (
+                  <div className="associated-items">
+                    {formData.associatedSubcategories &&
+                    formData.associatedSubcategories.length > 0 ? (
+                      formData.associatedSubcategories.map((subId) => {
+                        const subcategory = allCategories.find(
+                          (cat) => cat.id === subId
+                        );
+                        return subcategory ? (
+                          <span key={subId} className="associated-tag">
+                            <FaTags /> {subcategory.name}
+                          </span>
+                        ) : null;
+                      })
+                    ) : (
+                      <span className="form__value">
+                        No subcategories associated
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <div className="multi-select">
+                    {getAvailableSubcategories().map((subcategory) => (
+                      <label key={subcategory.id} className="checkbox-item">
+                        <input
+                          type="checkbox"
+                          checked={
+                            formData.associatedSubcategories?.includes(
+                              subcategory.id
+                            ) || false
+                          }
+                          onChange={(e) => {
+                            const currentSubs =
+                              formData.associatedSubcategories || [];
+                            if (e.target.checked) {
+                              handleMultiSelectChange(
+                                "associatedSubcategories",
+                                [...currentSubs, subcategory.id]
+                              );
+                            } else {
+                              handleMultiSelectChange(
+                                "associatedSubcategories",
+                                currentSubs.filter(
+                                  (id) => id !== subcategory.id
+                                )
+                              );
+                            }
+                          }}
+                        />
+                        <span className="checkbox-label">
+                          <FaTags /> {subcategory.name}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
             {mode === "view" && (
               <div className="form__row">

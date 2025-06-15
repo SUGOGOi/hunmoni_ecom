@@ -3,6 +3,7 @@ import {
   addBrand,
   addCategory,
   addSubCategory,
+  getAllBrands,
   getAllCategory,
   getSubcatgories,
 } from "../controllers/categoryAndBrandController.js";
@@ -20,5 +21,6 @@ router.get("/sub-categories", getSubcatgories);
 
 //=================================BRAND==================
 router.post("/add-brand", isLogin, addBrand);
+router.get("/all-brands", getAllBrands);
 
 export default router;

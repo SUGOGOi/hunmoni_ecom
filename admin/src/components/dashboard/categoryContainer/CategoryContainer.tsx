@@ -195,7 +195,6 @@ const CategoryContainer = () => {
           </button>
         </div>
       </header>
-
       <section className="categories__filters">
         <div className="categories__search">
           <FaSearch className="search-icon" />
@@ -228,7 +227,6 @@ const CategoryContainer = () => {
           </select>
         </div>
       </section>
-
       <section className="categories__content">
         <div className="categories__table-container">
           <table className="categories__table">
@@ -328,17 +326,16 @@ const CategoryContainer = () => {
         mode={modalMode}
         category={selectedCategory}
         parentCategories={getParentCategories()}
+        allCategories={categories} // Add this line
         onClose={() => setCategoryModalOpen(false)}
         onSave={handleSaveCategory}
       />
-
       <DeleteCategoryModal
         isOpen={deleteModalOpen}
         category={selectedCategory}
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={handleDeleteCategory}
       />
-
       <AdminFooter />
     </main>
   );

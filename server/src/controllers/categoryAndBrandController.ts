@@ -174,7 +174,6 @@ export const getSubcatgories = async (
 };
 
 //<==================================================ADD BRAND==================================================>
-
 export const addBrand = async (req: Request, res: Response): Promise<any> => {
   try {
     const { brandName, description, country, foundedYear, website, status } =
@@ -235,6 +234,25 @@ export const addBrand = async (req: Request, res: Response): Promise<any> => {
       success: true,
       message: `${newBrand.brandName} added`,
       newBrand,
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, error: "Internal server error" });
+  }
+};
+//<===================================================GET ALL BRANDS==========================================================
+export const getAllBrands = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  try {
+    const allBrands = await Brand.find();
+
+    return res.status(200).json({
+      success: true,
+      message: `Bands fetched`,
+      allBrands,
     });
   } catch (error) {
     return res

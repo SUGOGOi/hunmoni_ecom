@@ -69,9 +69,7 @@ declare global {
 //==========================================CATEGORY MODEL=======================
 export interface ICategory {
   _id: mongoose.Schema.Types.ObjectId;
-  category: string; // use when add a category
-  subCategory: string; // use when add a sub category
-  parentCategoryId: mongoose.Schema.Types.ObjectId;
+  category: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -87,8 +85,7 @@ export interface IBrand extends Document {
   status?: "active" | "inactive";
 }
 
-//==========================================SubCategoryBrand MODEL=======================
-export interface ISubCategoryBrand extends Document {
-  subCategoryId: mongoose.Types.ObjectId;
-  brandId: mongoose.Types.ObjectId;
+//<===================================PRODUCT MODEL=============================
+export interface IProduct extends Document {
+  productName: string;
 }

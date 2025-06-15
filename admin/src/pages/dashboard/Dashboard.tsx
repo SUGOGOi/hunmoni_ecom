@@ -61,14 +61,14 @@ const Dashboard: React.FC = () => {
         if (response.data.success === true) {
           console.log(response.data.admin);
           setAdmin(response.data.admin);
-          toast(`${response.data.message}`, {
-            // icon: "✔",
-            style: {
-              borderRadius: "13px",
-              background: "#123623",
-              color: "#16c864",
-            },
-          });
+          // toast(`${response.data.message}`, {
+          //   // icon: "✔",
+          //   style: {
+          //     borderRadius: "13px",
+          //     background: "#123623",
+          //     color: "#16c864",
+          //   },
+          // });
         }
       } catch (error) {
         if (axios.isAxiosError(error)) {
