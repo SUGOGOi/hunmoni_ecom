@@ -14,7 +14,9 @@ export const connectDB = async () => {
     //   console.log(`Mongodb connected ${connection.host}`);
     // }
 
-    const { connection } = await mongoose.connect(`${process.env.MONGO_LOCAL}`);
+    const { connection } = await mongoose.connect(
+      `${process.env.MONGO_ONLINE}`
+    );
 
     console.log(`Mongodb connected ${connection.host}`);
   } catch (error) {

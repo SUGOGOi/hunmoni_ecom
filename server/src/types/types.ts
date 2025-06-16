@@ -69,23 +69,35 @@ declare global {
 //==========================================CATEGORY MODEL=======================
 export interface ICategory {
   _id: mongoose.Schema.Types.ObjectId;
-  category: string;
+  name: string;
+  parentId: mongoose.Schema.Types.ObjectId;
+  description: string;
+  isActive: boolean;
+  level: number;
   createdAt: Date;
   updatedAt: Date;
 }
 
 //==========================================BRAND MODEL=======================
 export interface IBrand extends Document {
-  brandName: string;
-  logoUrl?: string;
-  description?: string;
-  country?: string;
-  foundedYear?: number;
-  website?: string;
-  status?: "active" | "inactive";
+  _id: mongoose.Schema.Types.ObjectId;
+  name: string;
+  description: string;
+  isActive: boolean;
+  logoUrl: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 //<===================================PRODUCT MODEL=============================
 export interface IProduct extends Document {
-  productName: string;
+  _id: mongoose.Schema.Types.ObjectId;
+  name: string;
+  description: string;
+  price: string;
+  brandId: mongoose.Schema.Types.ObjectId;
+  primaryCategoryId: mongoose.Schema.Types.ObjectId;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }

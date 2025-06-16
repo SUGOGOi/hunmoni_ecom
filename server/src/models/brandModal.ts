@@ -3,35 +3,23 @@ import { IBrand } from "../types/types.js";
 
 const brandSchema = new Schema<IBrand>(
   {
-    brandName: {
+    name: {
       type: String,
-      required: true,
-      trim: true,
+      required: false,
     },
-    // logoUrl: {
-    //   type: String,
-    //   required: false,
-    // },
     description: {
       type: String,
-      required: false,
+      required: true,
     },
-    country: {
+
+    isActive: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+    logoUrl: {
       type: String,
-      required: false,
-    },
-    foundedYear: {
-      type: Number,
-      required: false,
-    },
-    website: {
-      type: String,
-      required: false,
-    },
-    status: {
-      type: String,
-      enum: ["active", "inactive"],
-      default: "active",
+      required: true,
     },
   },
   { timestamps: true }
