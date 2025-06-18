@@ -84,8 +84,14 @@ export interface IBrand extends Document {
   name: string;
   description: string;
   isActive: boolean;
-  logoUrl: string;
-  key: string;
+  logo: {
+    key: {
+      type: string;
+    };
+    url: {
+      type: string;
+    };
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -110,4 +116,11 @@ export interface IBannedIP extends Document {
   reason: string;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface S3Config {
+  region: string;
+  accessKeyId: string;
+  secretAccessKey: string;
+  bucketName: string;
 }

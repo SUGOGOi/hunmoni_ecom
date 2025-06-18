@@ -1,7 +1,9 @@
-import transporter from "../config/emailConfig.js";
 import { Response } from "express";
-import { UserTypeInEmail } from "../types/types.js";
-import { Otp } from "../models/otpModel.js";
+// import { UserTypeInEmail } from "../types/types.js";
+// import { Otp } from "../models/otpModel.js";
+import transporter from "../../config/emailConfig.js";
+import { UserTypeInEmail } from "../../types/types.js";
+import { Otp } from "../../models/otpModel.js";
 
 const sendEmailVerificationOTP = async (
   res: Response,

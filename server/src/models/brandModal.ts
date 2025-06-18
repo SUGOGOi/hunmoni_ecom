@@ -17,9 +17,15 @@ const brandSchema = new Schema<IBrand>(
       required: true,
       default: true,
     },
-    logoUrl: {
-      type: String,
-      required: true,
+    logo: {
+      key: {
+        type: String,
+        required: true,
+      },
+      url: {
+        type: String,
+        required: true,
+      },
     },
   },
   { timestamps: true }

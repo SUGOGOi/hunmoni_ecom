@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import sendEmailVerificationOTP from "../../../utils/sendEmailVerificationOTP.js";
 import { User } from "../../../models/userModel.js";
 import bcrypt from "bcrypt";
+import sendEmailVerificationOTP from "../../../utils/email/sendEmailVerificationOTP.js";
 
 //<===========================================REG ADMIN=======================================================>
 export const registerAdmin = async (

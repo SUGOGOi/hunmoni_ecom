@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { User } from "../../../models/userModel.js";
 import bcrypt from "bcrypt";
-import { sendToken } from "../../../utils/sendToken.js";
+import { sendToken } from "../../../utils/auth/sendToken.js";
 
 //<=================================================ADMIN LOGIN===================================================>
 export const adminLogin = async (req: Request, res: Response): Promise<any> => {
