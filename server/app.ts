@@ -1,15 +1,17 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
-import cors from "cors";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
-import helmet from "helmet";
+import { routes } from "./src/routes/index.js";
+import { corsMiddleware } from "./src/middlewares/security/corsMiddleware.js";
+import { helmetMiddleware } from "./src/middlewares/security/helmetMiddleware.js";
+import { errorHandler } from "./src/middlewares/security/errorMiddleware.js";
 
 dotenv.config();
 
 const app = express();
 
-app.use(helmet());
+app.use(helmetMiddleware);
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(
@@ -18,27 +20,15 @@ app.use(
   })
 );
 app.use(cookieParser());
-app.use(
-  cors({
-    origin: [
-      `${process.env.FRONTEND_URL_ONE}`,
-      `${process.env.FRONTEND_URL_TWO}`,
-    ],
-    credentials: true,
-    methods: ["GET", "POST", "DELETE", "PUT"],
-  })
-);
+app.use(corsMiddleware);
 
 app.get("/", async (req: Request, res: Response): Promise<any> => {
   res.json({ success: true, message: `API working` });
 });
 
-//import routes
-import adminRoutes from "./src/routes/adminRoute.js";
-import categoryAndBrandRoutes from "./src/routes/categoryAndBrandRoute.js";
+app.use(errorHandler);
 
 //use routes
-app.use("/api/admin", adminRoutes);
-app.use("/api/category-brand", categoryAndBrandRoutes);
+app.use("/api", routes);
 
 export default app;

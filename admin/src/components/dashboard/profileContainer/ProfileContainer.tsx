@@ -29,7 +29,7 @@ const ProfileContainer = () => {
 
     try {
       const response = await axios.post(
-        `${SERVER_URL}/api/admin/edit-details`,
+        `${SERVER_URL}/api/admin/profile/edit-details`,
         {
           name: isEditName,
           phone: isEditPhone,

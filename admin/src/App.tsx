@@ -49,7 +49,7 @@ const App = () => {
       const checkLogin = async () => {
         try {
           const response = await axios.get(
-            `${SERVER_URL}/api/admin/login-check`,
+            `${SERVER_URL}/api/admin/auth/login-check`,
             {
               withCredentials: true,
             }

@@ -6,6 +6,7 @@ const categorySchema = new Schema<ICategory>(
     name: {
       type: String,
       required: false,
+      unique: true,
     },
 
     parentId: {

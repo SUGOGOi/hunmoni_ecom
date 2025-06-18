@@ -48,11 +48,12 @@ const Dashboard: React.FC = () => {
   const handleMyProfile = async () => {
     setActiveProfileArea(!activeProfileArea);
     setActiveMenuItem("Profile");
+    setAdmin(null);
 
     setTimeout(async () => {
       try {
         const response = await axios.get(
-          `${SERVER_URL}/api/admin/get-profile-data`,
+          `${SERVER_URL}/api/admin/profile/get`,
           {
             withCredentials: true,
           }
@@ -71,16 +72,20 @@ const Dashboard: React.FC = () => {
           // });
         }
       } catch (error) {
+        console.log(error);
         if (axios.isAxiosError(error)) {
           if (error.response) {
-            toast(`${error.response.data.error}`, {
-              // icon: "✔",
-              style: {
-                borderRadius: "13px",
-                background: "#3e1220",
-                color: "#ca2d44",
-              },
-            });
+            toast(
+              `${error.response.data.error || error.response.data.message}`,
+              {
+                // icon: "✔",
+                style: {
+                  borderRadius: "13px",
+                  background: "#3e1220",
+                  color: "#ca2d44",
+                },
+              }
+            );
           } else {
             toast(`Server Error!`, {
               // icon: "✔",
@@ -108,12 +113,9 @@ const Dashboard: React.FC = () => {
   const handleLogout = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        `${SERVER_URL}/api/admin/admin-logout`,
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.post(`${SERVER_URL}/api/admin/auth/logout`, {
+        withCredentials: true,
+      });
 
       if (response.data.success === true) {
         toast(`${response.data.message}`, {
@@ -274,7 +276,7 @@ const Dashboard: React.FC = () => {
           >
             <div className="sign-in-details">
               <p>Signed in as</p>
-              <p>sumsumgogoi51@gmail.com</p>
+              <p>sumsumgogoi@gmail.com</p>
             </div>
             <div className="my-profile" onClick={handleMyProfile}>
               <p>My Profile</p>

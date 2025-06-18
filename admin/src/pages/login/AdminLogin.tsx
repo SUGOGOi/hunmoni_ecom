@@ -3,7 +3,7 @@ import "./adminLogin.scss";
 import axios from "axios";
 import { SERVER_URL } from "../../store/store";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import type { LoginFormData } from "../../types/types";
 
 const AdminLogin: React.FC = () => {
@@ -12,7 +12,7 @@ const AdminLogin: React.FC = () => {
     password: "",
   });
 
-  const navigateTo = useNavigate();
+  // const navigateTo = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -32,7 +32,7 @@ const AdminLogin: React.FC = () => {
     try {
       setIsLoading(true);
       const response = await axios.post(
-        `${SERVER_URL}/api/admin/admin-login`,
+        `${SERVER_URL}/api/admin/auth/login`,
         {
           email: formData.email,
           password: formData.password,

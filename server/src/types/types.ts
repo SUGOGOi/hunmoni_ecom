@@ -85,6 +85,7 @@ export interface IBrand extends Document {
   description: string;
   isActive: boolean;
   logoUrl: string;
+  key: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -98,6 +99,15 @@ export interface IProduct extends Document {
   brandId: mongoose.Schema.Types.ObjectId;
   primaryCategoryId: mongoose.Schema.Types.ObjectId;
   isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+//<==================================================BANNED IP MODEL=========================
+export interface IBannedIP extends Document {
+  ip: string;
+  bannedUntil: Date;
+  reason: string;
   createdAt: Date;
   updatedAt: Date;
 }
