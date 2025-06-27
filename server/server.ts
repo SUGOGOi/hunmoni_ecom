@@ -1,11 +1,11 @@
 import app from "./app.js";
 import { connectDB } from "./src/config/dbConfig.js";
-import { connectRedis, getRedisClient } from "./src/config/redisConfig.js";
+import redisClient from "./src/config/redisConfig.js";
 
 const initalizeServer = async () => {
   try {
     await connectDB();
-    await connectRedis();
+    await redisClient.connect();
 
     const PORT = process.env.PORT || 5000;
 

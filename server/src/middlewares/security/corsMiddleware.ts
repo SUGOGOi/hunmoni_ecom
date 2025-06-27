@@ -19,6 +19,7 @@ const originChecker = (
   callback: (err: Error | null, allow?: boolean) => void
 ) => {
   const allowOrigins = getAllowedOrigins();
+  // console.log(allowOrigins);
 
   if (!origin) {
     return callback(null, true);

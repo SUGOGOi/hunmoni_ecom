@@ -1,6 +1,7 @@
 import rateLimit from "express-rate-limit";
 import { Request, Response } from "express";
 import { BannedIP } from "../../models/bannedIPModel.js";
+import redisClient from "../../config/redisConfig.js";
 
 // Auto-cleanup: remove expired bans every hour
 setInterval(async () => {
@@ -58,8 +59,6 @@ const createRateLimiter = (options: {
 }) => {
   const { windowMs, max, banThreshold, banDurationMs, message } = options;
 
-  const attemptsMap = new Map<string, number>();
-
   const limiter = rateLimit({
     windowMs,
     max,
@@ -68,22 +67,29 @@ const createRateLimiter = (options: {
     handler: async (req: Request, res: Response) => {
       if (await checkBan(req, res)) return;
 
-      const currentAttempts = attemptsMap.get(req.ip!) || 0;
-      const newAttempts = currentAttempts + 1;
+      const ip = req.ip;
 
-      if (newAttempts >= banThreshold) {
-        try {
+      const redisKey = `ratelimit:${ip}`;
+
+      try {
+        const currentAttempts = await redisClient.incr(redisKey);
+
+        if (currentAttempts === 1) {
+          await redisClient.expire(redisKey, Math.ceil(windowMs / 1000));
+        }
+
+        if (currentAttempts >= banThreshold) {
           await BannedIP.findOneAndUpdate(
-            { ip: req.ip },
+            { ip },
             {
-              ip: req.ip,
+              ip,
               bannedUntil: new Date(Date.now() + banDurationMs),
               reason: `Rate limit exceeded`,
             },
             { upsert: true }
           );
 
-          attemptsMap.delete(req.ip!);
+          await redisClient.del(redisKey);
 
           return res.status(429).json({
             success: false,
@@ -91,24 +97,22 @@ const createRateLimiter = (options: {
               banDurationMs / 60000
             )} minutes.`,
           });
-        } catch (error) {
-          console.error("Error banning IP:", error);
-          res.status(500).json({
-            success: false,
-            error: "Error banning IP. Please try again later.",
-          });
-          return;
         }
-      } else {
-        attemptsMap.set(req.ip!, newAttempts);
+
+        const retryAfterMinutes = Math.ceil(windowMs / (1000 * 60));
+
+        res.status(429).json({
+          success: false,
+          error: `${message}. Try again in ${retryAfterMinutes} minute(s).`,
+        });
+      } catch (error) {
+        console.error("Error banning IP:", error);
+        res.status(500).json({
+          success: false,
+          error: "Error banning IP. Please try again later.",
+        });
+        return;
       }
-
-      const retryAfterMinutes = Math.ceil(windowMs / (1000 * 60));
-
-      res.status(429).json({
-        success: false,
-        error: `${message}. Try again in ${retryAfterMinutes} minute(s).`,
-      });
     },
   });
 
@@ -134,8 +138,8 @@ export const authRateLimiter = createRateLimiter({
 
 export const adminRateLimiter = createRateLimiter({
   windowMs: 30 * 60 * 1000,
-  max: 30,
-  banThreshold: 60,
+  max: 4,
+  banThreshold: 4,
   banDurationMs: 60 * 60 * 1000,
   message: "Too many admin actions",
 });

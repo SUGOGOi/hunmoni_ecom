@@ -25,6 +25,10 @@ export const adminLogin = async (req: Request, res: Response): Promise<any> => {
         .json({ success: false, error: "Invalid email or password" });
     }
 
+    if (userFound.role != "admin") {
+      return res.status(401).json({ success: false, error: "Unauthorized" });
+    }
+
     if (!userFound.is_email_verified) {
       return res
         .status(401)
