@@ -1,20 +1,21 @@
 enum UserRole {
-    ADMIN
-    CUSTOMER
-    // Add other roles if needed
+  ADMIN
+  CUSTOMER
+  // Add other roles if needed
 }
 
 model User {
-    id                String   @id @default(uuid())
-    name              String
-    email             String   @unique
-    phone             String   @unique
-    password          String? // Nullable for social auth users
-    role              UserRole @default(CUSTOMER)
-    is_email_verified Boolean  @default(false)
-    is_phone_verified Boolean  @default(false)
-    googoleId         String? // Note: Typo preserved from original, consider renaming to googleId
-    githubId          String?
-    createdAt         DateTime @default(now())
-    updatedAt         DateTime @updatedAt
+  id                String   @id @default(uuid())
+  name              String
+  email             String   @unique
+  phone             String   @unique
+  password          String? // Nullable for social auth users
+  role              UserRole @default(CUSTOMER)
+  is_email_verified Boolean  @default(false)
+  is_phone_verified Boolean  @default(false)
+  googoleId         String? // Note: Typo preserved from original, consider renaming to googleId
+  githubId          String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  otp               Otp? // not include in table's column
 }

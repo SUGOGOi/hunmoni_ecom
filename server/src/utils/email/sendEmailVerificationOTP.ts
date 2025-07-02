@@ -4,6 +4,9 @@ import { Response } from "express";
 import transporter from "../../config/emailConfig.js";
 import { UserTypeInEmail } from "../../types/types.js";
 import { Otp } from "../../models/otpModel.js";
+import { PrismaClient } from "@prisma/client";
+
+const db = new PrismaClient();
 
 const sendEmailVerificationOTP = async (
   res: Response,
@@ -108,18 +111,27 @@ const sendEmailVerificationOTP = async (
 `,
     });
 
-    const findOTP = await Otp.findOne({ userId: user._id });
+    const findOTP = await db.otp.findUnique({
+      where: { userId: user._id },
+    });
 
     if (!findOTP) {
       //save new otp
-      await Otp.create({
-        userId: user._id,
-        otp,
+      await db.otp.create({
+        data: {
+          userId: user._id,
+          otp: otp.toString(),
+          createdAt: new Date(),
+        },
       });
     } else {
-      findOTP.otp = otp.toString();
-      findOTP.createdAt = new Date();
-      await findOTP.save();
+      await db.otp.update({
+        where: { id: findOTP.id },
+        data: {
+          otp: otp.toString(),
+          createdAt: new Date(),
+        },
+      });
     }
 
     return otp;

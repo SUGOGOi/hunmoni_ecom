@@ -2,6 +2,9 @@ import { Request, Response } from "express";
 import { User } from "../../../models/userModel.js";
 import bcrypt from "bcrypt";
 import sendEmailVerificationOTP from "../../../utils/email/sendEmailVerificationOTP.js";
+import { PrismaClient } from "@prisma/client";
+
+const db = new PrismaClient();
 
 //<===========================================REG ADMIN=======================================================>
 export const registerAdmin = async (
@@ -26,15 +29,20 @@ export const registerAdmin = async (
         .json({ success: false, error: "Password not matched" });
     }
 
-    let existUser = await User.findOne({ email });
-    if (existUser) {
+    const emailExists = await db.user.findUnique({
+      where: { email: email },
+    });
+
+    if (emailExists) {
       return res
         .status(409)
         .json({ success: false, error: "Email already exist" });
     }
 
-    existUser = await User.findOne({ phone });
-    if (existUser) {
+    const phoneExists = await db.user.findUnique({
+      where: { phone: phone },
+    });
+    if (phoneExists) {
       return res
         .status(409)
         .json({ success: false, error: "Phone number already exist" });
@@ -44,21 +52,27 @@ export const registerAdmin = async (
     const salt = await bcrypt.genSalt(Number(process.env.SALT));
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const newUser = await User.create({
-      name,
-      email,
-      phone,
-      password: hashedPassword,
+    const newUser = await db.user.create({
+      data: {
+        name,
+        email,
+        phone,
+        password: hashedPassword,
+        role: "ADMIN",
+        createdAt: new Date(),
+      },
     });
 
     const { error } = await sendEmailVerificationOTP(res, {
-      _id: newUser._id,
+      _id: newUser.id,
       name: newUser.name,
       email: newUser.email,
     });
 
     if (error) {
-      await newUser.deleteOne();
+      await db.user.delete({
+        where: { id: newUser.id },
+      });
       return res.status(error.statusCode).json({
         success: false,
         error: error.errorMessage,
@@ -69,7 +83,7 @@ export const registerAdmin = async (
       success: true,
       message: `Verification link sent to ${email}`,
       user: {
-        _id: newUser._id,
+        _id: newUser.id,
         email: newUser.email,
       },
     });

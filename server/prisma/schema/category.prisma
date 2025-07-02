@@ -1,0 +1,13 @@
+model Category {
+    id                 String               @id @default(uuid())
+    name               String
+    isActive           Boolean              @default(true)
+    description        String
+    level              Int                  @default(0)
+    parentId           String?
+    parent             Category?            @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+    subCategories      Category[]           @relation("CategoryHierarchy") // not include in table's column
+    productAndcategory ProductAndCategory[]
+    createdAt          DateTime             @default(now())
+    updatedAt          DateTime             @updatedAt
+}

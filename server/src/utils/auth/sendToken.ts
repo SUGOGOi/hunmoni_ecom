@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 
 export const sendToken = async (
   res: Response,
-  admin: { _id: mongoose.Schema.Types.ObjectId; name: string }
+  admin: { _id: string; name: string }
 ): Promise<any> => {
   try {
     const token = jwt.sign({ _id: admin!._id }, `${process.env.JWT_SECRET}`, {

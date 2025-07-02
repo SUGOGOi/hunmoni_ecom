@@ -25,8 +25,8 @@ export interface IOtp extends Document {
 }
 
 export enum UserRole {
-  ADMIN = "admin",
-  CUSTOMER = "customer",
+  ADMIN = "ADMIN",
+  CUSTOMER = "CUSTOMER",
 }
 
 export interface UserTypeInEmail {
@@ -44,16 +44,16 @@ export interface JwtPayloadCustom extends jwt.JwtPayload {
 import { Request } from "express";
 
 interface User {
-  _id: mongoose.Schema.Types.ObjectId;
+  id: string;
   name: string;
   email: string;
   phone: string;
-  password: string;
+  password: string | null;
   is_email_verified?: boolean;
   is_phone_verified?: boolean;
-  role?: UserRole;
-  googoleId?: string;
-  githubId?: string;
+  role: UserRole;
+  googoleId?: string | null;
+  githubId?: string | null;
   createdAt: Date;
   updatedAt: Date;
 }

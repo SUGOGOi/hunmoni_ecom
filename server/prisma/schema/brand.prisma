@@ -1,0 +1,11 @@
+model Brand {
+    id          String    @id @default(uuid())
+    name        String    @unique
+    description String
+    isActive    Boolean   @default(true)
+    logoKey     String
+    logoUrl     String
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+    products    Product[] // not include in table's column
+}

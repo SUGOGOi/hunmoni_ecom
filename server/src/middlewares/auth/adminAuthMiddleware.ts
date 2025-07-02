@@ -1,7 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import { JwtPayloadCustom } from "../../types/types.js";
+import { JwtPayloadCustom, UserRole } from "../../types/types.js";
 import jwt from "jsonwebtoken";
 import { User } from "../../models/userModel.js";
+import { PrismaClient } from "@prisma/client";
+
+const db = new PrismaClient();
 
 export const isLoginCheck = async (
   req: Request,
@@ -26,8 +29,14 @@ export const isLoginCheck = async (
       process.env.JWT_SECRET
     ) as JwtPayloadCustom;
 
-    const user = await User.findById(decoded._id).select("_id");
-    // console.log(user);
+    // const user = await User.findById(decoded._id).select("_id");  <=============================mongodb
+
+    const user = await db.user.findUnique({
+      where: { id: decoded._id },
+      select: {
+        id: true,
+      },
+    });
 
     if (!user) {
       return res.status(400).json({
@@ -70,13 +79,20 @@ export const isLogin = async (
       process.env.JWT_SECRET
     ) as JwtPayloadCustom;
 
-    const user = await User.findById(decoded._id);
+    // const user = await User.findById(decoded._id);
+
+    const user = await db.user.findUnique({
+      where: { id: decoded._id },
+    });
 
     if (!user) {
       return res.status(401).json({ success: false, error: "User not found" });
     }
 
-    req.user = user;
+    req.user = {
+      ...user,
+      role: user.role as UserRole,
+    };
 
     next();
   } catch (error) {

@@ -24,9 +24,11 @@ app.use(corsMiddleware);
 app.use(errorHandler);
 
 //<===================================API CHECK=====================================>
-app.get("/", async (req: Request, res: Response): Promise<any> => {
-  res.json({ success: true, message: `API working` });
-});
+setTimeout(() => {
+  app.get("/", async (req: Request, res: Response): Promise<any> => {
+    res.json({ success: true, message: `API working` });
+  });
+}, 1000);
 
 //use routes
 app.use("/api", routes);

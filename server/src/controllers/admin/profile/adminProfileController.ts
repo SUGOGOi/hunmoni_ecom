@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
 import { User } from "../../../models/userModel.js";
+import { PrismaClient } from "@prisma/client";
+
+const db = new PrismaClient();
 
 //<========================================================================GET ADMIN PROFILE INFO======================================================>
 export const getAdminProfileDetails = async (
@@ -38,15 +41,6 @@ export const editAdminInfo = async (
   try {
     const { name, phone } = req.body;
     const user = req.user;
-    const editUser = await User.findById(user!._id);
-
-    if (!editUser) {
-      console.log("No edit user found");
-      return res.status(500).json({
-        success: false,
-        error: "Unable to edit now, try again later",
-      });
-    }
 
     if (!name && !phone) {
       return res.status(400).json({
@@ -55,11 +49,14 @@ export const editAdminInfo = async (
       });
     }
 
-    if (name && editUser!.name !== name) {
-      editUser.name = name;
+    // Build update data object
+    const updateData: { name?: string; phone?: string } = {};
+
+    if (name) {
+      updateData.name = name;
     }
 
-    if (phone && editUser.phone !== phone) {
+    if (phone) {
       const isValidPhone = /^\d{10}$/.test(phone);
 
       if (!isValidPhone) {
@@ -69,15 +66,37 @@ export const editAdminInfo = async (
             "Phone number must be exactly 10 digits and contain only numbers.",
         });
       }
-      editUser.phone = phone;
+      updateData.phone = phone;
     }
 
-    await editUser.save();
+    // Update user using Prisma
+    const updatedUser = await db.user.update({
+      where: { id: user!.id },
+      data: updateData,
+    });
+
+    const getUser = await db.user.findUnique({
+      where: { id: user!.id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        password: false,
+        role: true,
+        is_email_verified: true,
+        is_phone_verified: true,
+        googoleId: true,
+        githubId: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
 
     return res.status(200).json({
       success: true,
       message: "Updated",
-      admin: editUser,
+      admin: getUser,
     });
   } catch (error) {
     console.error(error);

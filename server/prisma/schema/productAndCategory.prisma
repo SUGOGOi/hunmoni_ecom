@@ -1,0 +1,10 @@
+model ProductAndCategory {
+    productId  String
+    categoryId String
+    product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+    category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+
+    @@id([productId, categoryId])
+}

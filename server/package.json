@@ -9,10 +9,9 @@
     "start": "node dist/server.js",
     "watch": "tsc -w",
     "build": "tsc",
-    "p:m":"prisma migrate dev",
-    "p:g":"prisma generate",
-    "p:r":"prisma migrate reset"
-
+    "p:m": "prisma migrate dev",
+    "p:g": "prisma generate",
+    "p:r": "prisma migrate reset"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +21,7 @@
     "@aws-sdk/client-s3": "^3.830.0",
     "@aws-sdk/s3-request-presigner": "^3.830.0",
     "@prisma/client": "^6.10.1",
+    "axios": "^1.10.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
