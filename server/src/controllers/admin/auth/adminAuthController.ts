@@ -1,61 +1,52 @@
 import { Request, Response } from "express";
-import { User } from "../../../models/userModel.js";
-import bcrypt from "bcrypt";
-import { sendToken } from "../../../utils/auth/sendToken.js";
 import { PrismaClient } from "@prisma/client";
+import admin from "../../../config/firebaseAdminConfig.js";
+import {
+  setAccessToken,
+  setCookies,
+  setRefreshToken,
+} from "../../../utils/auth/setCookie.js";
 
 const db = new PrismaClient();
 
 //<=================================================ADMIN LOGIN===================================================>
 export const adminLogin = async (req: Request, res: Response): Promise<any> => {
   try {
-    const { email, password } = req.body;
-    // console.log(req.ip);
+    const { idToken, refreshToken } = req.body;
+    // console.log(idToken);
 
-    console.log(email, password);
-    if (!email || !password) {
-      return res
-        .status(400)
-        .json({ success: false, error: "All fields are required" });
-    }
-
-    // const userFound = await User.findOne({ email: email }).select("+password"); <================mongodb
-    const userFound = await db.user.findUnique({
-      where: { email: email },
-      select: {
-        id: true,
-        name: true,
-        password: true,
-        role: true,
-        is_email_verified: true,
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const { uid, email, name, picture, email_verified, firebase } =
+      decodedToken;
+    const provider = firebase.sign_in_provider;
+    await db.user.upsert({
+      where: { firebaseUid: uid },
+      update: {
+        email,
+        name,
+        photoUrl: picture,
+        isEmailVerified: email_verified,
+      },
+      create: {
+        firebaseUid: uid,
+        email: email!,
+        name: name,
+        photoUrl: picture,
+        isEmailVerified: email_verified,
+        provider: provider,
       },
     });
 
-    if (!userFound) {
+    if (!email_verified) {
       return res
         .status(404)
-        .json({ success: false, error: "Invalid email or password" });
+        .json({ success: false, error: "Verify your email!" });
     }
 
-    if (userFound.role != "ADMIN") {
-      return res.status(401).json({ success: false, error: "Unauthorized" });
-    }
+    await setRefreshToken(res, refreshToken);
+    await setAccessToken(res, accessToken);
 
-    if (!userFound.is_email_verified) {
-      return res
-        .status(401)
-        .json({ success: false, error: "Your acoount is not verified" });
-    }
-
-    const isPasswordMatch = await bcrypt.compare(password, userFound.password!);
-
-    if (!isPasswordMatch) {
-      return res
-        .status(401)
-        .json({ success: false, error: "Invalid email or password" });
-    }
-
-    sendToken(res, { _id: userFound.id, name: userFound.name });
+    return res.status(200).json({ success: true, error: `Welcome ${name}` });
   } catch (error) {
     console.log(error);
     return res

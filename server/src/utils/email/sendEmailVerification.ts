@@ -3,24 +3,21 @@ import { Response } from "express";
 // import { Otp } from "../models/otpModel.js";
 import transporter from "../../config/emailConfig.js";
 import { UserTypeInEmail } from "../../types/types.js";
-import { Otp } from "../../models/otpModel.js";
+// import { Otp } from "../../models/otpModel.js";
 import { PrismaClient } from "@prisma/client";
 
 const db = new PrismaClient();
 
-const sendEmailVerificationOTP = async (
-  res: Response,
-  user: UserTypeInEmail
+const sendEmailVerification = async (
+  email: string | undefined,
+  userName: string,
+  verificationLink: string
 ): Promise<any> => {
   try {
-    //generate 4 digit no
-    const otp = Math.floor(1000 + Math.random() * 9000);
-
     //otp verification link
-    // const otpVrificationLink = `${process.env.FRONTEND_URL}/account/verify-email`;
     await transporter.sendMail({
       from: process.env.EMAIL_FROM,
-      to: user.email,
+      to: email,
       subject: "Verify Your Account",
       html: `<!DOCTYPE html>
 <html lang="en">
@@ -94,10 +91,9 @@ const sendEmailVerificationOTP = async (
             <h1> Verify Your Account</h1>
         </div>
         <div class="email-body">
-            <h2>Hi ${user.name},</h2>
-            <p>Thank you for signing up! To complete your registration, please verify your account using the OTP below:</p>
-            <div class="otp-code"> ${otp} </div>
-            <p>This OTP is valid for 10 minutes.</p>
+            <h2>Hi ${userName},</h2>
+            <p>Thank you for signing up! To complete your registration, Please verify your email by clicking the link below:</p>
+            <a href="${verificationLink}">Verify Email</a>
             <p>If you didn’t create this account, you can safely ignore this email. </p>
             <p>Thank you,<br>The E-Shop Team 💼</p>
         </div>
@@ -111,30 +107,7 @@ const sendEmailVerificationOTP = async (
 `,
     });
 
-    const findOTP = await db.otp.findUnique({
-      where: { userId: user._id },
-    });
-
-    if (!findOTP) {
-      //save new otp
-      await db.otp.create({
-        data: {
-          userId: user._id,
-          otp: otp.toString(),
-          createdAt: new Date(),
-        },
-      });
-    } else {
-      await db.otp.update({
-        where: { id: findOTP.id },
-        data: {
-          otp: otp.toString(),
-          createdAt: new Date(),
-        },
-      });
-    }
-
-    return otp;
+    return { success: true };
   } catch (error) {
     console.log(error);
     return {
@@ -146,4 +119,4 @@ const sendEmailVerificationOTP = async (
   }
 };
 
-export default sendEmailVerificationOTP;
+export default sendEmailVerification;

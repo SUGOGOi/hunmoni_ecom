@@ -114,5 +114,5 @@
     "server.ts",
     "app.ts",
     "src/**/*"
-  ]
+, "src/utils/auth/setCookie.ts"  ]
 }

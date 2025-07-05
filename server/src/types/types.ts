@@ -1,27 +1,39 @@
 import jwt from "jsonwebtoken";
-import mongoose, { Document } from "mongoose";
 
-// FOR USER MODEL
-export interface IUser extends Document {
-  _id: mongoose.Schema.Types.ObjectId;
-  name: string;
-  email: string;
-  phone: string;
-  password: string;
-  is_email_verified?: boolean;
-  is_phone_verified?: boolean;
-  role?: UserRole;
-  googoleId?: string;
-  githubId?: string;
-  createdAt: Date;
-  updatedAt: Date;
+export interface GoogleStrategyOptions {
+  clientID: string;
+  clientSecret: string;
+  callbackURL: string;
+  scope?: string[];
 }
 
-export interface IOtp extends Document {
-  _id: mongoose.Schema.Types.ObjectId;
-  userId: mongoose.Schema.Types.ObjectId;
-  otp: string;
-  createdAt: Date;
+export interface JwtPayload {
+  userId: string;
+  email: string;
+  name: string;
+}
+
+export interface TokenPair {
+  accessToken: string;
+  refreshToken: string;
+}
+
+export interface RegisterInput {
+  name: string;
+  email: string;
+  password: string;
+}
+
+export interface LoginInput {
+  email: string;
+  password: string;
+}
+
+export interface GoogleProfile {
+  id: string;
+  emails: Array<{ value: string; verified: boolean }>;
+  displayName: string;
+  photos: Array<{ value: string }>;
 }
 
 export enum UserRole {
@@ -43,16 +55,17 @@ export interface JwtPayloadCustom extends jwt.JwtPayload {
 // types/express.d.ts
 import { Request } from "express";
 
-interface User {
+export interface User {
   id: string;
   name: string;
   email: string;
-  phone: string;
+  phone?: string;
   password: string | null;
   is_email_verified?: boolean;
   is_phone_verified?: boolean;
   role: UserRole;
-  googoleId?: string | null;
+  provider?: string;
+  googleId?: string | null;
   githubId?: string | null;
   createdAt: Date;
   updatedAt: Date;
@@ -64,49 +77,6 @@ declare global {
       user?: User;
     }
   }
-}
-
-//==========================================CATEGORY MODEL=======================
-export interface ICategory {
-  _id: mongoose.Schema.Types.ObjectId;
-  name: string;
-  parentId: mongoose.Schema.Types.ObjectId;
-  description: string;
-  isActive: boolean;
-  level: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-//==========================================BRAND MODEL=======================
-export interface IBrand extends Document {
-  _id: mongoose.Schema.Types.ObjectId;
-  name: string;
-  description: string;
-  isActive: boolean;
-  logo: {
-    key: {
-      type: string;
-    };
-    url: {
-      type: string;
-    };
-  };
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-//<===================================PRODUCT MODEL=============================
-export interface IProduct extends Document {
-  _id: mongoose.Schema.Types.ObjectId;
-  name: string;
-  description: string;
-  price: string;
-  brandId: mongoose.Schema.Types.ObjectId;
-  primaryCategoryId: mongoose.Schema.Types.ObjectId;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 //<==================================================BANNED IP MODEL=========================

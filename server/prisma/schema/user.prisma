@@ -5,17 +5,17 @@ enum UserRole {
 }
 
 model User {
-  id                String   @id @default(uuid())
-  name              String
-  email             String   @unique
-  phone             String   @unique
-  password          String? // Nullable for social auth users
-  role              UserRole @default(CUSTOMER)
-  is_email_verified Boolean  @default(false)
-  is_phone_verified Boolean  @default(false)
-  googoleId         String? // Note: Typo preserved from original, consider renaming to googleId
-  githubId          String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  otp               Otp? // not include in table's column
+  id              String   @id @default(uuid())
+  name            String
+  email           String   @unique
+  phone           String?  @unique
+  role            UserRole @default(CUSTOMER)
+  isEmailVerified Boolean  @default(false)
+  isPhoneVerified Boolean  @default(false)
+  photoUrl        String?
+  firebaseUid     String   @unique
+  provider        String? // 'google', 'credentials'
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  otp             Otp? // not include in table's column
 }

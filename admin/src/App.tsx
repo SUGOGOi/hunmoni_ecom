@@ -12,6 +12,7 @@ import React, { Suspense, useEffect, useState } from "react";
 import { SERVER_URL, useStore } from "./store/store";
 import axios from "axios";
 import Loading from "./components/loading/Loading";
+import Register from "./pages/register/Register";
 const Dashboard = React.lazy(() => import("./pages/dashboard/Dashboard"));
 
 const App = () => {
@@ -28,6 +29,10 @@ const App = () => {
       ) : (
         <Navigate to="/" />
       ),
+    },
+    {
+      path: "/reg",
+      element: <Register />,
     },
     {
       path: "/",

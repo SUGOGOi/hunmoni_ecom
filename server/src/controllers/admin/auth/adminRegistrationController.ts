@@ -1,10 +1,7 @@
 import { Request, Response } from "express";
-import { User } from "../../../models/userModel.js";
-import bcrypt from "bcrypt";
-import sendEmailVerificationOTP from "../../../utils/email/sendEmailVerificationOTP.js";
-import { PrismaClient } from "@prisma/client";
-
-const db = new PrismaClient();
+import admin from "../../../config/firebaseAdminConfig.js";
+import sendEmailVerification from "../../../utils/email/sendEmailVerification.js";
+import { db } from "../../../config/dbConfig.js";
 
 //<===========================================REG ADMIN=======================================================>
 export const registerAdmin = async (
@@ -12,80 +9,71 @@ export const registerAdmin = async (
   res: Response
 ): Promise<any> => {
   try {
-    const { name, email, phone, password, confirm_password } = req.body;
+    const { idToken, name } = req.body;
+    const fullUrl = req.protocol + "://" + req.get("host");
 
-    // console.log(name, email, phone, password, confirm_password);
-
-    if (!name || !email || !phone || !password || !confirm_password) {
+    if (!name || !idToken) {
       return res.status(400).json({
         success: true,
-        error: "Enter all fields",
+        error: "Require all fields",
       });
     }
 
-    if (password !== confirm_password) {
-      return res
-        .status(400)
-        .json({ success: false, error: "Password not matched" });
-    }
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const { uid, email, picture, email_verified, firebase } = decodedToken;
 
     const emailExists = await db.user.findUnique({
       where: { email: email },
     });
-
     if (emailExists) {
       return res
         .status(409)
         .json({ success: false, error: "Email already exist" });
     }
 
-    const phoneExists = await db.user.findUnique({
-      where: { phone: phone },
-    });
-    if (phoneExists) {
-      return res
-        .status(409)
-        .json({ success: false, error: "Phone number already exist" });
-    }
+    // const phoneExists = await db.user.findUnique({
+    //   where: { phone: phone },
+    // });
+    // if (phoneExists) {
+    //   return res
+    //     .status(409)
+    //     .json({ success: false, error: "Phone number already exist" });
+    // }
 
-    //generate salt and hash password
-    const salt = await bcrypt.genSalt(Number(process.env.SALT));
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const provider = firebase.sign_in_provider;
+    const userName = name || decodedToken.name || null;
 
-    const newUser = await db.user.create({
-      data: {
-        name,
+    await db.user.upsert({
+      where: { firebaseUid: uid },
+      update: {
         email,
-        phone,
-        password: hashedPassword,
+        name: userName,
+        photoUrl: picture,
+        isEmailVerified: email_verified,
         role: "ADMIN",
-        createdAt: new Date(),
+      },
+      create: {
+        firebaseUid: uid,
+        email: email!,
+        name: userName,
+        photoUrl: picture,
+        isEmailVerified: email_verified,
+        provider: provider,
+        role: "ADMIN",
       },
     });
 
-    const { error } = await sendEmailVerificationOTP(res, {
-      _id: newUser.id,
-      name: newUser.name,
-      email: newUser.email,
-    });
-
-    if (error) {
-      await db.user.delete({
-        where: { id: newUser.id },
+    const verificationLink = await admin
+      .auth()
+      //@ts-ignore
+      .generateEmailVerificationLink(email, {
+        url: `${fullUrl}/account/verify-email`,
       });
-      return res.status(error.statusCode).json({
-        success: false,
-        error: error.errorMessage,
-      });
-    }
 
+    await sendEmailVerification(email, userName, verificationLink);
     return res.status(201).json({
       success: true,
       message: `Verification link sent to ${email}`,
-      user: {
-        _id: newUser.id,
-        email: newUser.email,
-      },
     });
   } catch (error) {
     console.log(error);
@@ -94,3 +82,9 @@ export const registerAdmin = async (
       .json({ success: false, error: "Internal server error" });
   }
 };
+
+// export const handleEmailVerification = async (req: Request, res: Response) => {
+
+//  const
+//   res.redirect("https://yourfrontend.com/login?verified=true");
+// };
