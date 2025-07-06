@@ -5,3 +5,4 @@
 /server/dist
 /server/.env
 /ecom_multivendor_mern
+/.env

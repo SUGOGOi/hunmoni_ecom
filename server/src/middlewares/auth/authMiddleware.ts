@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import { JwtPayloadCustom, UserRole } from "../../types/types.js";
-import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 import axios from "axios";
 import { setAccessToken } from "../../utils/auth/setCookie.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const db = new PrismaClient();
 
@@ -66,10 +67,10 @@ export const isLogin = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { token } = req.cookies;
+    const { accessToken } = req.cookies;
     // console.log(token);
 
-    if (!token) {
+    if (!accessToken) {
       return res
         .status(401)
         .json({ success: false, error: "Please login first" });
@@ -79,25 +80,18 @@ export const isLogin = async (
       throw new Error("JWT_SECRET is not defined in environment variables.");
     }
 
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET
-    ) as JwtPayloadCustom;
+    // const user = await db.user.findUnique({
+    //   where: { id: decoded._id },
+    // });
 
-    // const user = await User.findById(decoded._id);
+    // if (!user) {
+    //   return res.status(401).json({ success: false, error: "User not found" });
+    // }
 
-    const user = await db.user.findUnique({
-      where: { id: decoded._id },
-    });
-
-    if (!user) {
-      return res.status(401).json({ success: false, error: "User not found" });
-    }
-
-    req.user = {
-      ...user,
-      role: user.role as UserRole,
-    };
+    // req.user = {
+    //   ...user,
+    //   role: user.role as UserRole,
+    // };
 
     next();
   } catch (error) {

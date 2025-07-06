@@ -59,14 +59,13 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  phone?: string;
-  password: string | null;
-  is_email_verified?: boolean;
-  is_phone_verified?: boolean;
+  phone?: string | null | undefined;
+  isEmailVerified?: boolean;
+  isPhoneVerified?: boolean;
   role: UserRole;
-  provider?: string;
-  googleId?: string | null;
-  githubId?: string | null;
+  photoUrl: string | null;
+  firebaseUid: string;
+  provider: string | null;
   createdAt: Date;
   updatedAt: Date;
 }

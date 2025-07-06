@@ -3,7 +3,6 @@ import { PrismaClient } from "@prisma/client";
 import admin from "../../../config/firebaseAdminConfig.js";
 import {
   setAccessToken,
-  setCookies,
   setRefreshToken,
 } from "../../../utils/auth/setCookie.js";
 
@@ -12,10 +11,10 @@ const db = new PrismaClient();
 //<=================================================ADMIN LOGIN===================================================>
 export const adminLogin = async (req: Request, res: Response): Promise<any> => {
   try {
-    const { idToken, refreshToken } = req.body;
+    const { accessToken, refreshToken } = req.body;
     // console.log(idToken);
 
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const decodedToken = await admin.auth().verifyIdToken(accessToken);
     const { uid, email, name, picture, email_verified, firebase } =
       decodedToken;
     const provider = firebase.sign_in_provider;

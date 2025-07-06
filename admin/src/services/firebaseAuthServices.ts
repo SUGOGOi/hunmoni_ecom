@@ -22,13 +22,16 @@ export const registerWithEmail = async (
     await updateProfile(auth.currentUser, { displayName: name });
   }
 
-  const idToken = await auth.currentUser?.getIdToken();
+  const user = auth.currentUser;
+  const idToken = await user?.getIdToken();
+  const refreshToken = user?.refreshToken;
 
   const response = await axios.post(
     `${import.meta.env.VITE_SERVER_URL}/api/admin/auth/register`,
     {
-      idToken,
+      accessToken: idToken,
       name,
+      refreshToken,
     },
     {
       withCredentials: true,
@@ -46,11 +49,14 @@ export const loginWithEmail = async (email: string, password: string) => {
     email,
     password
   );
-  const idToken = await auth.currentUser?.getIdToken();
+  const user = auth.currentUser;
+  const idToken = await user?.getIdToken();
+  const refreshToken = user?.refreshToken;
   const response = await axios.post(
     `${import.meta.env.VITE_SERVER_URL}/api/admin/auth/login`,
     {
-      idToken,
+      accessToken: idToken,
+      refreshToken,
     },
     {
       withCredentials: true,
@@ -65,12 +71,15 @@ export const loginWithEmail = async (email: string, password: string) => {
 export const loginWithGoogle = async () => {
   const result = await signInWithPopup(auth, provider);
 
-  const idToken = await auth.currentUser?.getIdToken();
+  const user = auth.currentUser;
+  const idToken = await user?.getIdToken();
+  const refreshToken = user?.refreshToken;
 
   const response = await axios.post(
     `${import.meta.env.VITE_SERVER_URL}/api/admin/auth/login`,
     {
-      idToken,
+      accessToken: idToken,
+      refreshToken,
     },
     {
       withCredentials: true,
