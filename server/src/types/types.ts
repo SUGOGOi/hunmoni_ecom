@@ -52,9 +52,6 @@ export interface JwtPayloadCustom extends jwt.JwtPayload {
   email: string;
 }
 
-// types/express.d.ts
-import { Request } from "express";
-
 export interface User {
   id: string;
   name: string;

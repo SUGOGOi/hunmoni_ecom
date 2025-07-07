@@ -155,6 +155,10 @@
     justify-content: center;
     color: #d87f37;
 
+    img {
+      border-radius: 50%;
+    }
+
     .profile__avatar-edit {
       position: absolute;
       bottom: 5px;

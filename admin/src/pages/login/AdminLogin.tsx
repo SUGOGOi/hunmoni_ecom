@@ -16,6 +16,7 @@ const AdminLogin: React.FC = () => {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState("");
 
+  //========================================================LOGIN WITH EMAIL/PASSWORD=============================================
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -61,82 +62,32 @@ const AdminLogin: React.FC = () => {
     }
   };
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-
-  //   try {
-  //     setIsLoading(true);
-  //     const response = await axios.post(
-  //       `${SERVER_URL}/api/admin/auth/login`,
-  //       {
-  //         email: formData.email,
-  //         password: formData.password,
-  //       },
-  //       {
-  //         withCredentials: true,
-  //       }
-  //     );
-
-  //     if (response.data.success === true) {
-  //       toast(`${response.data.message}`, {
-  //         // icon: "✔",
-  //         style: {
-  //           borderRadius: "13px",
-  //           background: "#123623",
-  //           color: "#16c864",
-  //         },
-  //       });
-  //     }
-  //     window.location.reload();
-  //   } catch (error) {
-  //     if (axios.isAxiosError(error)) {
-  //       if (error.response) {
-  //         toast(`${error.response.data.error}`, {
-  //           // icon: "✔",
-  //           style: {
-  //             borderRadius: "13px",
-  //             background: "#3e1220",
-  //             color: "#ca2d44",
-  //           },
-  //         });
-  //       } else {
-  //         toast(`Server Error!`, {
-  //           // icon: "✔",
-  //           style: {
-  //             borderRadius: "13px",
-  //             background: "#3e1220",
-  //             color: "#ca2d44",
-  //           },
-  //         });
-  //       }
-  //     }
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
+  //================================================LOGIN WITH GOOGLE=============================
   const handleGoogleLogin = async () => {
     setError("");
     setIsGoogleLoading(true);
 
     try {
-      await loginWithGoogle();
-      alert("Logged in!");
+      const { user, message } = await loginWithGoogle();
+
       // if (response.data.success === true) {
-      //   toast(`${response.data.message}`, {
-      //     // icon: "✔",
-      //     style: {
-      //       borderRadius: "13px",
-      //       background: "#123623",
-      //       color: "#16c864",
-      //     },
-      //   });
+      toast(`${message}`, {
+        // icon: "✔",
+        style: {
+          borderRadius: "13px",
+          background: "#123623",
+          color: "#16c864",
+        },
+      });
       // }
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+      // console.log(message);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
           toast(`${error.response.data.error}`, {
-            // icon: "✔",
             style: {
               borderRadius: "13px",
               background: "#3e1220",
@@ -145,7 +96,6 @@ const AdminLogin: React.FC = () => {
           });
         } else {
           toast(`Server Error!`, {
-            // icon: "✔",
             style: {
               borderRadius: "13px",
               background: "#3e1220",
@@ -206,7 +156,7 @@ const AdminLogin: React.FC = () => {
           <button
             type="submit"
             className="admin-login__submit"
-            disabled={isLoading}
+            disabled={isLoading || isGoogleLoading}
           >
             {isLoading ? "Signing in..." : "Sign In"}
           </button>

@@ -38,14 +38,27 @@ export const adminLogin = async (req: Request, res: Response): Promise<any> => {
 
     if (!email_verified) {
       return res
-        .status(404)
+        .status(400)
         .json({ success: false, error: "Verify your email!" });
+    }
+
+    const adminFound = await db.user.findUnique({
+      where: { email: email },
+    });
+
+    if (adminFound?.role !== "ADMIN") {
+      return res.status(400).json({
+        success: false,
+        error: "Unauthorized, wait for admin approval",
+      });
     }
 
     await setRefreshToken(res, refreshToken);
     await setAccessToken(res, accessToken);
 
-    return res.status(200).json({ success: true, error: `Welcome ${name}` });
+    return res
+      .status(200)
+      .json({ success: true, message: `Welcome ${name}`, admin: adminFound });
   } catch (error) {
     console.log(error);
     return res
@@ -60,22 +73,31 @@ export const adminLogout = async (
   res: Response
 ): Promise<any> => {
   try {
-    // Use the same options as when setting the cookie
-    const options = {
-      httpOnly: process.env.NODE_ENV === "production",
-      secure: process.env.NODE_ENV === "production",
-      sameSite: (process.env.NODE_ENV === "production" ? "none" : "lax") as
-        | "none"
-        | "lax",
-    };
+    // 1. Get the user's UID from the access token (ID token)
+    const accessToken = req.cookies.accessToken;
+    console.log(accessToken);
+    if (accessToken) {
+      const decoded = await admin.auth().verifyIdToken(accessToken);
+      const uid = decoded.uid;
+      console.log(uid);
 
-    res.clearCookie("token", options);
+      // 2. Revoke the user's refresh tokens in Firebase
+      await admin.auth().revokeRefreshTokens(uid); // This invalidates all refresh tokens for the user
+    }
+
+    // 3. Clear cookies
+    res.clearCookie("accessToken", { path: "/" });
+    res.clearCookie("refreshToken", { path: "/" });
 
     return res.status(200).json({
       success: true,
       message: "Logout successful",
     });
   } catch (error) {
+    // Even if something fails, always clear cookies for security
+    res.clearCookie("accessToken", { path: "/" });
+    res.clearCookie("refreshToken", { path: "/" });
+    //view error for dev environment
     console.error(error);
     return res.status(500).json({
       success: false,

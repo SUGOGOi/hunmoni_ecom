@@ -9,7 +9,7 @@ import "./App.scss";
 import AdminLogin from "./pages/login/AdminLogin";
 import React, { Suspense, useEffect, useState } from "react";
 
-import { SERVER_URL, useStore } from "./store/store";
+import { useStore } from "./store/store";
 import axios from "axios";
 import Loading from "./components/loading/Loading";
 import Register from "./pages/register/Register";
@@ -18,6 +18,7 @@ const Dashboard = React.lazy(() => import("./pages/dashboard/Dashboard"));
 const App = () => {
   const { isLogin, setIsLogin } = useStore();
   const [isLoading, setIsLoading] = useState(true);
+  const { setAdmin } = useStore();
 
   const router = createBrowserRouter([
     {
@@ -54,7 +55,7 @@ const App = () => {
       const checkLogin = async () => {
         try {
           const response = await axios.get(
-            `${SERVER_URL}/api/admin/auth/login-check`,
+            `${import.meta.env.VITE_SERVER_URL}/api/admin/auth/login-check`,
             {
               withCredentials: true,
             }
@@ -64,6 +65,8 @@ const App = () => {
             console.log(`login : ${response.data.success}`);
             setIsLogin(true);
             setIsLoading(false);
+            setAdmin(response.data.user);
+            console.log(response.data.user);
           }
         } catch (error) {
           console.log(error);

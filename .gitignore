@@ -1,8 +1,8 @@
 /client/node_modules
 /admin/node_modules
+/admin/.env
 /server/node_modules
 /server/generated/prisma
 /server/dist
 /server/.env
 /ecom_multivendor_mern
-/.env

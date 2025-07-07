@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { FaUser, FaEdit, FaSave, FaTimes, FaCamera } from "react-icons/fa";
+import { useState } from "react";
+import { FaEdit, FaSave, FaTimes, FaCamera } from "react-icons/fa";
 import AdminFooter from "../../footer/AdminFooter";
 import "./ProfileContainer.scss";
 import { SERVER_URL, useStore } from "../../../store/store";
@@ -14,8 +14,8 @@ function capitalize(word: string) {
 
 const ProfileContainer = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [isEditName, setIsEditName] = useState("");
-  const [isEditPhone, setIsEditPhone] = useState("");
+  const [isEditName, setIsEditName] = useState<string | null | undefined>("");
+  const [isEditPhone, setIsEditPhone] = useState<string | null | undefined>("");
   const { admin, setAdmin } = useStore();
 
   const handleEdit = () => {
@@ -117,10 +117,14 @@ const ProfileContainer = () => {
             <div className="profile__card">
               <div className="profile__avatar-section">
                 <div className="profile__avatar">
-                  <FaUser size={60} />
-                  <button className="profile__avatar-edit">
-                    <FaCamera size={14} />
-                  </button>
+                  <img src={`${admin?.photoUrl}`} alt="profile photo" />
+                  {admin.photoUrl ? (
+                    <></>
+                  ) : (
+                    <button className="profile__avatar-edit">
+                      <FaCamera size={14} />
+                    </button>
+                  )}
                 </div>
                 <div className="profile__basic-info">
                   <h3>{capitalize(admin.name)}</h3>

@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import axios from "axios";
 import { setAccessToken } from "../../utils/auth/setCookie.js";
 import dotenv from "dotenv";
+import admin from "../../config/firebaseAdminConfig.js";
 
 dotenv.config();
 
@@ -38,8 +39,8 @@ export const isLoginCheck = async (
       }
     );
 
-    const data = await response.data.json();
-    console.log(data);
+    const data = await response.data;
+
     if (!data.id_token) {
       return res.status(400).json({
         success: false,
@@ -47,11 +48,26 @@ export const isLoginCheck = async (
       });
     }
 
-    // const user = await User.findById(decoded._id).select("_id");  <=============================mongodb
+    // Now decode id_token to get user info (email)
+    const decodedToken = await admin.auth().verifyIdToken(data.id_token);
+    const email = decodedToken.email;
+
+    const userFound = await db.user.findUnique({
+      where: { email },
+    });
+
+    if (!userFound) {
+      return res.status(500).json({
+        success: false,
+        error: `Internal server error`,
+      });
+    }
 
     await setAccessToken(res, data.id_token);
 
-    return res.status(200).json({ success: true, isLogin: true });
+    return res
+      .status(200)
+      .json({ success: true, isLogin: true, user: userFound });
   } catch (error) {
     console.log(error);
     return res

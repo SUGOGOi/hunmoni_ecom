@@ -1,14 +1,16 @@
 export interface adminDetails {
-  _id: string;
+  id: string;
   name: string;
   email: string;
-  phone: string;
-  role: string;
-  is_email_verified: boolean;
-  is_phone_verified: boolean;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
+  phone?: string | null | undefined;
+  isEmailVerified?: boolean;
+  isPhoneVerified?: boolean;
+  role: "ADMIN" | "CUSTOMER";
+  photoUrl: string | null;
+  firebaseUid: string;
+  provider: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface useStoreType {

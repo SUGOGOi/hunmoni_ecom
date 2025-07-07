@@ -2,6 +2,9 @@ import { Request, Response } from "express";
 import admin from "../../../config/firebaseAdminConfig.js";
 import sendEmailVerification from "../../../utils/email/sendEmailVerification.js";
 import { db } from "../../../config/dbConfig.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 //<===========================================REG ADMIN=======================================================>
 export const registerAdmin = async (
@@ -10,7 +13,8 @@ export const registerAdmin = async (
 ): Promise<any> => {
   try {
     const { idToken, name } = req.body;
-    const fullUrl = req.protocol + "://" + req.get("host");
+
+    console.log(idToken, name);
 
     if (!name || !idToken) {
       return res.status(400).json({
@@ -50,7 +54,6 @@ export const registerAdmin = async (
         name: userName,
         photoUrl: picture,
         isEmailVerified: email_verified,
-        role: "ADMIN",
       },
       create: {
         firebaseUid: uid,
@@ -59,7 +62,6 @@ export const registerAdmin = async (
         photoUrl: picture,
         isEmailVerified: email_verified,
         provider: provider,
-        role: "ADMIN",
       },
     });
 
@@ -67,7 +69,7 @@ export const registerAdmin = async (
       .auth()
       //@ts-ignore
       .generateEmailVerificationLink(email, {
-        url: `${fullUrl}/account/verify-email`,
+        url: `${process.env.ADMIN_ORIGIN_DEV}/`,
       });
 
     await sendEmailVerification(email, userName, verificationLink);
@@ -82,9 +84,3 @@ export const registerAdmin = async (
       .json({ success: false, error: "Internal server error" });
   }
 };
-
-// export const handleEmailVerification = async (req: Request, res: Response) => {
-
-//  const
-//   res.redirect("https://yourfrontend.com/login?verified=true");
-// };

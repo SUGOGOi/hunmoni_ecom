@@ -8,7 +8,6 @@ import { LiaShoppingCartSolid } from "react-icons/lia";
 import { BsPeople } from "react-icons/bs";
 // import toast from "react-hot-toast";
 import axios from "axios";
-import { SERVER_URL } from "../../store/store";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import DashboardContainer from "../../components/dashboard/dashboardContainer/DashboardContainer";
@@ -21,11 +20,7 @@ import CouponContainer from "../../components/couponContainer/CouponContainer";
 import { MdCategory, MdOutlineReviews } from "react-icons/md";
 import ReviewContainer from "../../components/reviewContainer/ReviewContainer";
 import CategoryContainer from "../../components/dashboard/categoryContainer/CategoryContainer";
-
-function deleteCookie(name: string) {
-  const expires = new Date(Date.now() - 1000).toUTCString(); // 1 second in the past
-  document.cookie = `${name}=; expires=${expires}; path=/;`;
-}
+import { logout } from "../../services/firebaseAuthServices";
 
 const Dashboard: React.FC = () => {
   const navigateTo = useNavigate();
@@ -34,26 +29,20 @@ const Dashboard: React.FC = () => {
     useStore();
   const [activeProfileArea, setActiveProfileArea] = useState(false);
 
+  //===========================TO SHOW PROFILE DETAILS AREA===================================
   const handleProfile = () => {
     setActiveProfileArea(!activeProfileArea);
-    // toast("Hello", {
-    //   icon: "✔",
-    //   style: {
-    //     borderRadius: "13px",
-    //     background: "#123623",
-    //     color: "#16c864",
-    //   },
-    // });
   };
+
+  //===============================GO TO PROFILE CONTAINER======================================
   const handleMyProfile = async () => {
     setActiveProfileArea(!activeProfileArea);
     setActiveMenuItem("Profile");
-    setAdmin(null);
 
     setTimeout(async () => {
       try {
         const response = await axios.get(
-          `${SERVER_URL}/api/admin/profile/get`,
+          `${import.meta.env.VITE_SERVER_URL}/api/admin/profile/get`,
           {
             withCredentials: true,
           }
@@ -112,10 +101,9 @@ const Dashboard: React.FC = () => {
   //<========================================================LOG OUT==============================================================>
   const handleLogout = async (e: React.FormEvent) => {
     e.preventDefault();
+
     try {
-      const response = await axios.post(`${SERVER_URL}/api/admin/auth/logout`, {
-        withCredentials: true,
-      });
+      const response = await logout();
 
       if (response.data.success === true) {
         toast(`${response.data.message}`, {
@@ -127,7 +115,8 @@ const Dashboard: React.FC = () => {
           },
         });
         setIsLogin(false);
-        deleteCookie("token");
+        // deleteCookie("accessToken");
+        // deleteCookie("refreshToken");
       }
 
       navigateTo("/");
@@ -276,7 +265,7 @@ const Dashboard: React.FC = () => {
           >
             <div className="sign-in-details">
               <p>Signed in as</p>
-              <p>sumsumgogoi@gmail.com</p>
+              <p>{`${admin?.email}`}</p>
             </div>
             <div className="my-profile" onClick={handleMyProfile}>
               <p>My Profile</p>
@@ -287,10 +276,11 @@ const Dashboard: React.FC = () => {
           </div>
           <div className="profile-area" onClick={handleProfile}>
             <img
-              src="https://avatars.githubusercontent.com/u/104547345?v=4"
+              // src="https://avatars.githubusercontent.com/u/104547345?v=4"
+              src={`${admin?.photoUrl}`}
               alt="profile photo"
             />
-            <p>Sumsum Gogoi</p>
+            <p>{`${admin?.name}`}</p>
           </div>
         </div>
       </div>
