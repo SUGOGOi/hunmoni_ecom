@@ -4,6 +4,8 @@ import axios from "axios";
 import { setAccessToken } from "../../utils/auth/setCookie.js";
 import dotenv from "dotenv";
 import admin from "../../config/firebaseAdminConfig.js";
+import { getAccessToken } from "../../utils/auth/getAccessToken.js";
+import { UserRole } from "../../types/types.js";
 
 dotenv.config();
 
@@ -77,37 +79,53 @@ export const isLoginCheck = async (
 };
 
 //<=============================================LOGIN CHECK WITH GET USER ================================================>
-export const isLogin = async (
+export const isLoginForwardUser = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { accessToken } = req.cookies;
+    const { accessToken, refreshToken } = req.cookies;
     // console.log(token);
 
-    if (!accessToken) {
+    let accessTokenGot: any;
+    if (!accessToken && !refreshToken) {
       return res
-        .status(401)
-        .json({ success: false, error: "Please login first" });
+        .status(400)
+        .json({ success: false, error: `Please login first` });
+    } else if (refreshToken && !accessToken) {
+      accessTokenGot = await getAccessToken(refreshToken);
     }
 
-    if (!process.env.JWT_SECRET) {
-      throw new Error("JWT_SECRET is not defined in environment variables.");
+    console.log(accessToken);
+
+    // Now decode accessTokenGot to get user info (email)
+    let decodedToken;
+    if (accessToken) {
+      decodedToken = await admin.auth().verifyIdToken(accessToken);
+    } else {
+      decodedToken = await admin.auth().verifyIdToken(accessTokenGot);
+    }
+    const email = decodedToken.email;
+
+    const userFound = await db.user.findUnique({
+      where: { email },
+    });
+
+    if (!userFound) {
+      console.log("user not found");
+      return res.status(500).json({
+        success: false,
+        error: `Internal server error`,
+      });
     }
 
-    // const user = await db.user.findUnique({
-    //   where: { id: decoded._id },
-    // });
+    // console.log(userFound);
 
-    // if (!user) {
-    //   return res.status(401).json({ success: false, error: "User not found" });
-    // }
-
-    // req.user = {
-    //   ...user,
-    //   role: user.role as UserRole,
-    // };
+    req.user = {
+      ...userFound,
+      role: userFound.role as UserRole,
+    };
 
     next();
   } catch (error) {

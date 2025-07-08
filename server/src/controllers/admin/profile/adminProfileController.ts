@@ -1,8 +1,5 @@
 import { Request, Response } from "express";
-import { User } from "../../../models/userModel.js";
-import { PrismaClient } from "@prisma/client";
-
-const db = new PrismaClient();
+import { db } from "../../../config/dbConfig.js";
 
 //<========================================================================GET ADMIN PROFILE INFO======================================================>
 export const getAdminProfileDetails = async (
@@ -82,12 +79,9 @@ export const editAdminInfo = async (
         name: true,
         email: true,
         phone: true,
-        password: false,
         role: true,
-        is_email_verified: true,
-        is_phone_verified: true,
-        googoleId: true,
-        githubId: true,
+        isEmailVerified: true,
+        isPhoneVerified: true,
         createdAt: true,
         updatedAt: true,
       },

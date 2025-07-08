@@ -1,9 +1,0 @@
-model Otp {
-  id        String   @id @default(uuid())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade) // not include in table's column
-  userId    String   @unique
-  otp       String
-  createdAt DateTime @default(now())
-
-  @@index([createdAt])
-}

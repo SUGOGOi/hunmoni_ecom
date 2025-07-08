@@ -14,14 +14,18 @@ function capitalize(word: string) {
 
 const ProfileContainer = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [isEditName, setIsEditName] = useState<string | null | undefined>("");
-  const [isEditPhone, setIsEditPhone] = useState<string | null | undefined>("");
+  const [isEditName, setIsEditName] = useState<
+    string | number | readonly string[] | undefined
+  >("");
+  const [isEditPhone, setIsEditPhone] = useState<
+    string | number | readonly string[] | undefined
+  >("");
   const { admin, setAdmin } = useStore();
 
   const handleEdit = () => {
     setIsEditing(true);
     setIsEditName(admin!.name);
-    setIsEditPhone(admin!.phone);
+    setIsEditPhone(admin!.phone!);
   };
 
   const handleSave = async () => {
@@ -90,7 +94,7 @@ const ProfileContainer = () => {
               <p>Manage your personal information and settings</p>
             </div>
             <div className="profile__actions">
-              {!isEditing ? (
+              {/* {!isEditing ? (
                 <button className="profile__edit-btn" onClick={handleEdit}>
                   <FaEdit size={16} />
                   <span>Edit Profile</span>
@@ -109,7 +113,7 @@ const ProfileContainer = () => {
                     <span>Cancel</span>
                   </button>
                 </div>
-              )}
+              )} */}
             </div>
           </header>
 
@@ -127,7 +131,7 @@ const ProfileContainer = () => {
                   )}
                 </div>
                 <div className="profile__basic-info">
-                  <h3>{capitalize(admin.name)}</h3>
+                  <h3>{admin.name}</h3>
                   <p className="profile__role">{capitalize(admin.role)}</p>
                   <p className="profile__department">Managemant</p>
                 </div>
@@ -139,14 +143,14 @@ const ProfileContainer = () => {
                   <div className="profile__fields">
                     <div className="profile__field">
                       <label>Full Name</label>
-                      {isEditing ? (
+                      {isEditing && admin.provider === "password" ? (
                         <input
                           type="text"
                           value={isEditName}
                           onChange={(e) => setIsEditName(e.target.value)}
                         />
                       ) : (
-                        <span>{capitalize(admin.name)}</span>
+                        <span>{admin.name}</span>
                       )}
                     </div>
                     <div className="profile__field">
@@ -162,7 +166,13 @@ const ProfileContainer = () => {
                           onChange={(e) => setIsEditPhone(e.target.value)}
                         />
                       ) : (
-                        <span>{`+91 ${admin.phone}`}</span>
+                        <>
+                          {admin.phone ? (
+                            <span>{`${admin.phone}`}</span>
+                          ) : (
+                            <p>Not Provided</p>
+                          )}
+                        </>
                       )}
                     </div>
                   </div>
