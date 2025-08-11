@@ -41,8 +41,11 @@ const BrandContainer = () => {
           }
         );
       } else if (modalMode === "edit") {
+        console.log("edit mode");
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(`error : ${error}`);
+    }
   };
 
   //   const handleDeleteBrand = (brandId: string) => {
@@ -52,9 +55,9 @@ const BrandContainer = () => {
   const filteredBrands = brands
     ? brands.filter(
         (brand) =>
-          brand.name.toLowerCase() ||
-          brand.description.toLowerCase() ||
-          brand.id.toLowerCase()
+          brand.name!.toLowerCase() ||
+          brand.description!.toLowerCase() ||
+          brand.id!.toLowerCase()
       )
     : [];
   //   console.log(filteredBrands[0].isActive);
@@ -154,10 +157,10 @@ const BrandContainer = () => {
                         </td>
                         <td>
                           <span className={`status status-${brand.status}`}>
-                            {brand.status.toLowerCase()}
+                            {brand.status!.toLowerCase()}
                           </span>
                         </td>
-                        <td>{brand.createdAt.toString().split("T")[0]}</td>
+                        <td>{brand.createdAt!.toString().split("T")[0]}</td>
                         <td>
                           <div className="actions">
                             <button

@@ -6,7 +6,7 @@ import type { Brand, BrandInput } from "../../types/types";
 interface BrandModalProps {
   isOpen: boolean;
   mode: "view" | "edit" | "add";
-  brand: object | null;
+  brand: Brand | null;
   onClose: () => void;
   onSave: (brand: Brand) => void;
 }
@@ -24,7 +24,9 @@ const BrandModal: React.FC<BrandModalProps> = ({
     status: "",
     file: null,
   });
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null | undefined>(
+    null
+  );
 
   useEffect(() => {
     if (isOpen) {
@@ -148,7 +150,7 @@ const BrandModal: React.FC<BrandModalProps> = ({
             <div className="brand-modal__field">
               <label>Status</label>
               {readOnly ? (
-                <span>{formData.status.toLocaleLowerCase()}</span>
+                <span>{formData.status?.toLocaleLowerCase()}</span>
               ) : (
                 <select
                   value={formData.status}
@@ -161,7 +163,17 @@ const BrandModal: React.FC<BrandModalProps> = ({
             </div>
             <div className="brand-modal__field">
               <label>Created Date</label>
-              <span>{formData.createdAt.toString().split("T")[0]}</span>
+              {/* <span>{formData.createdAt.toString().split("T")[0]}</span> */}
+              <span>
+                {
+                  (formData?.createdAt
+                    ? new Date(formData.createdAt)
+                    : new Date()
+                  )
+                    .toISOString()
+                    .split("T")[0]
+                }
+              </span>
             </div>
           </div>
         </div>

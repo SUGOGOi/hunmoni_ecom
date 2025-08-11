@@ -14,20 +14,25 @@ export interface adminDetails {
 }
 
 export interface Brand {
-  id: string;
-  name: string;
-  description: string;
-  logoKey: string;
-  logoUrl: string;
-  status: string;
-  createdAt: string;
+  id?: string | undefined;
+  name?: string;
+  description?: string;
+  logoKey?: string | undefined;
+  logoUrl?: string | undefined;
+  status?: string;
+  createdAt?: string | undefined;
+  file?: File | null | undefined;
 }
 
 export interface BrandInput {
-  name: string;
-  description: string;
-  status: string;
-  file: File | null;
+  id?: string | undefined;
+  name?: string;
+  description?: string;
+  status?: string;
+  file?: File | null | undefined;
+  createdAt?: string | undefined;
+  logoKey?: string | undefined;
+  logoUrl?: string | undefined;
 }
 
 export interface useStoreType {
