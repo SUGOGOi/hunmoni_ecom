@@ -41,6 +41,11 @@ export enum UserRole {
   CUSTOMER = "CUSTOMER",
 }
 
+export enum BrandStatus {
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+}
+
 export interface UserTypeInEmail {
   email: string;
   _id: string | any;
@@ -63,6 +68,17 @@ export interface User {
   photoUrl: string | null;
   firebaseUid: string;
   provider: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Brand {
+  id: string;
+  name: string;
+  description: string;
+  status: BrandStatus;
+  logoKey: string;
+  logoUrl: string;
   createdAt: Date;
   updatedAt: Date;
 }

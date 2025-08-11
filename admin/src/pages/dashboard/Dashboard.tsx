@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./dashboard.scss";
 
 import { useStore } from "../../store/store";
-import { AiOutlineDashboard, AiOutlineHome } from "react-icons/ai";
+import { AiFillTags, AiOutlineDashboard, AiOutlineHome } from "react-icons/ai";
 import { AiOutlineProduct } from "react-icons/ai";
 import { LiaShoppingCartSolid } from "react-icons/lia";
 import { BsPeople } from "react-icons/bs";
@@ -21,6 +21,7 @@ import { MdCategory, MdOutlineReviews } from "react-icons/md";
 import ReviewContainer from "../../components/reviewContainer/ReviewContainer";
 import CategoryContainer from "../../components/dashboard/categoryContainer/CategoryContainer";
 import { logout } from "../../services/firebaseAuthServices";
+import BrandContainer from "../../components/dashboard/brandContainer/BrandContainer";
 
 const Dashboard: React.FC = () => {
   const navigateTo = useNavigate();
@@ -173,28 +174,7 @@ const Dashboard: React.FC = () => {
                 <AiOutlineDashboard size={24} />
                 Dashboard
               </li>
-              <li
-                className={`menu-item ${
-                  activeMenuItem === "Products" ? "active" : ""
-                }`}
-                onClick={() => {
-                  setActiveMenuItem("Products");
-                }}
-              >
-                <AiOutlineProduct size={24} />
-                Products
-              </li>
-              <li
-                className={`menu-item ${
-                  activeMenuItem === "Orders" ? "active" : ""
-                }`}
-                onClick={() => {
-                  setActiveMenuItem("Orders");
-                }}
-              >
-                <LiaShoppingCartSolid size={25} />
-                Orders
-              </li>
+
               <li
                 className={`menu-item ${
                   activeMenuItem === "Customers" ? "active" : ""
@@ -242,6 +222,18 @@ const Dashboard: React.FC = () => {
 
               <li
                 className={`menu-item ${
+                  activeMenuItem === "Brands" ? "active" : ""
+                }`}
+                onClick={() => {
+                  setActiveMenuItem("Brands");
+                }}
+              >
+                <AiFillTags size={24} />
+                Brands
+              </li>
+
+              <li
+                className={`menu-item ${
                   activeMenuItem === "Categories" ? "active" : ""
                 }`}
                 onClick={() => {
@@ -250,6 +242,28 @@ const Dashboard: React.FC = () => {
               >
                 <MdCategory size={24} />
                 Categories
+              </li>
+              <li
+                className={`menu-item ${
+                  activeMenuItem === "Products" ? "active" : ""
+                }`}
+                onClick={() => {
+                  setActiveMenuItem("Products");
+                }}
+              >
+                <AiOutlineProduct size={24} />
+                Products
+              </li>
+              <li
+                className={`menu-item ${
+                  activeMenuItem === "Orders" ? "active" : ""
+                }`}
+                onClick={() => {
+                  setActiveMenuItem("Orders");
+                }}
+              >
+                <LiaShoppingCartSolid size={25} />
+                Orders
               </li>
             </ul>
           </nav>
@@ -277,7 +291,7 @@ const Dashboard: React.FC = () => {
           <div className="profile-area" onClick={handleProfile}>
             <img
               // src="https://avatars.githubusercontent.com/u/104547345?v=4"
-              src={`${admin?.photoUrl}`}
+              src={admin?.photoUrl || "/default-profile.png"}
               alt="profile photo"
             />
             <p>{`${admin?.name}`}</p>
@@ -301,6 +315,7 @@ const Dashboard: React.FC = () => {
       {activeMenuItem === "Coupons" && <CouponContainer />}
       {activeMenuItem === "Reviews" && <ReviewContainer />}
       {activeMenuItem === "Categories" && <CategoryContainer />}
+      {activeMenuItem === "Brands" && <BrandContainer />}
     </div>
   );
 };

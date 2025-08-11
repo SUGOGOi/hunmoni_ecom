@@ -17,5 +17,4 @@ model User {
   provider        String? // 'google', 'credentials'
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-  otp             Otp? // not include in table's column
 }

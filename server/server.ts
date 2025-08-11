@@ -1,5 +1,4 @@
 import app from "./app.js";
-import { connectDB } from "./src/config/dbConfig.js";
 import redisClient from "./src/config/redisConfig.js";
 import { startHealthPing } from "./src/utils/health/healthPing.js";
 

@@ -17,7 +17,10 @@ export const useStore = create<useStoreType>()(
     //admin data
     admin: null,
     setAdmin: (change) => set(() => ({ admin: change })),
+
+    brands: null,
+    setBrands: (change) => set(() => ({ brands: change })),
   }))
 );
 
-export const SERVER_URL = "http://localhost:4000";
+export const SERVER_URL = "fff";

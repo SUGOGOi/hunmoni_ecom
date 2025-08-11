@@ -13,6 +13,23 @@ export interface adminDetails {
   updatedAt: Date;
 }
 
+export interface Brand {
+  id: string;
+  name: string;
+  description: string;
+  logoKey: string;
+  logoUrl: string;
+  status: string;
+  createdAt: string;
+}
+
+export interface BrandInput {
+  name: string;
+  description: string;
+  status: string;
+  file: File | null;
+}
+
 export interface useStoreType {
   //for active menu
   activeMenuItem: string | null;
@@ -24,6 +41,9 @@ export interface useStoreType {
   //for admin details
   admin: adminDetails | null;
   setAdmin: (change: adminDetails | null) => void;
+
+  brands: Brand[] | null;
+  setBrands: (change: Brand[] | null) => void;
 }
 
 export interface LoginFormData {

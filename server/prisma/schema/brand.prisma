@@ -1,11 +1,16 @@
+enum BrandStatus {
+    ACTIVE
+    INACTIVE
+}
+
 model Brand {
-    id          String    @id @default(uuid())
-    name        String    @unique
+    id          String      @id @default(uuid())
+    name        String      @unique
     description String
-    isActive    Boolean   @default(true)
+    status      BrandStatus @default(ACTIVE)
     logoKey     String
     logoUrl     String
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
     products    Product[] // not include in table's column
 }

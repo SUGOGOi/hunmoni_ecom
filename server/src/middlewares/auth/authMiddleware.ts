@@ -97,7 +97,7 @@ export const isLoginForwardUser = async (
       accessTokenGot = await getAccessToken(refreshToken);
     }
 
-    console.log(accessToken);
+    // console.log(accessToken);
 
     // Now decode accessTokenGot to get user info (email)
     let decodedToken;

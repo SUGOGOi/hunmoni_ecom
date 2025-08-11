@@ -66,7 +66,7 @@ const App = () => {
             setIsLogin(true);
             setIsLoading(false);
             setAdmin(response.data.user);
-            console.log(response.data.user);
+            // console.log(response.data.user);
           }
         } catch (error) {
           console.log(error);

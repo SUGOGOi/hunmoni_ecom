@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { FaEdit, FaSave, FaTimes, FaCamera } from "react-icons/fa";
+import { FaCamera } from "react-icons/fa";
 import AdminFooter from "../../footer/AdminFooter";
 import "./ProfileContainer.scss";
-import { SERVER_URL, useStore } from "../../../store/store";
+import { useStore } from "../../../store/store";
 import Loading from "../../loading/Loading";
-import axios from "axios";
-import toast from "react-hot-toast";
+// import axios from "axios";
+// import toast from "react-hot-toast";
 
 function capitalize(word: string) {
   if (!word) return "";
@@ -13,76 +13,72 @@ function capitalize(word: string) {
 }
 
 const ProfileContainer = () => {
-  const [isEditing, setIsEditing] = useState(false);
   const [isEditName, setIsEditName] = useState<
     string | number | readonly string[] | undefined
   >("");
-  const [isEditPhone, setIsEditPhone] = useState<
-    string | number | readonly string[] | undefined
-  >("");
-  const { admin, setAdmin } = useStore();
+  const { admin } = useStore(); //setAdmin
 
-  const handleEdit = () => {
-    setIsEditing(true);
-    setIsEditName(admin!.name);
-    setIsEditPhone(admin!.phone!);
-  };
+  // const handleEdit = () => {
+  //   setIsEditing(true);
+  //   setIsEditName(admin!.name);
+  //   setIsEditPhone(admin!.phone!);
+  // };
 
-  const handleSave = async () => {
-    setIsEditing(false);
+  // const handleSave = async () => {
+  //   setIsEditing(false);
 
-    try {
-      const response = await axios.post(
-        `${SERVER_URL}/api/admin/profile/edit-details`,
-        {
-          name: isEditName,
-          phone: isEditPhone,
-        },
-        {
-          withCredentials: true,
-        }
-      );
+  //   try {
+  //     const response = await axios.post(
+  //       `${SERVER_URL}/api/admin/profile/edit-details`,
+  //       {
+  //         name: isEditName,
+  //         phone: isEditPhone,
+  //       },
+  //       {
+  //         withCredentials: true,
+  //       }
+  //     );
 
-      if (response.data.success === true) {
-        toast(`${response.data.message}`, {
-          // icon: "✔",
-          style: {
-            borderRadius: "13px",
-            background: "#123623",
-            color: "#16c864",
-          },
-        });
+  //     if (response.data.success === true) {
+  //       toast(`${response.data.message}`, {
+  //         // icon: "✔",
+  //         style: {
+  //           borderRadius: "13px",
+  //           background: "#123623",
+  //           color: "#16c864",
+  //         },
+  //       });
 
-        setAdmin(response.data.admin);
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error.response) {
-          toast(`${error.response.data.error}`, {
-            // icon: "✔",
-            style: {
-              borderRadius: "13px",
-              background: "#3e1220",
-              color: "#ca2d44",
-            },
-          });
-        } else {
-          toast(`Server Error!`, {
-            // icon: "✔",
-            style: {
-              borderRadius: "13px",
-              background: "#3e1220",
-              color: "#ca2d44",
-            },
-          });
-        }
-      }
-    }
-  };
+  //       setAdmin(response.data.admin);
+  //     }
+  //   } catch (error) {
+  //     if (axios.isAxiosError(error)) {
+  //       if (error.response) {
+  //         toast(`${error.response.data.error}`, {
+  //           // icon: "✔",
+  //           style: {
+  //             borderRadius: "13px",
+  //             background: "#3e1220",
+  //             color: "#ca2d44",
+  //           },
+  //         });
+  //       } else {
+  //         toast(`Server Error!`, {
+  //           // icon: "✔",
+  //           style: {
+  //             borderRadius: "13px",
+  //             background: "#3e1220",
+  //             color: "#ca2d44",
+  //           },
+  //         });
+  //       }
+  //     }
+  //   }
+  // };
 
-  const handleCancel = () => {
-    setIsEditing(false);
-  };
+  // const handleCancel = () => {
+  //   setIsEditing(false);
+  // };
 
   return (
     <>
@@ -121,7 +117,10 @@ const ProfileContainer = () => {
             <div className="profile__card">
               <div className="profile__avatar-section">
                 <div className="profile__avatar">
-                  <img src={`${admin?.photoUrl}`} alt="profile photo" />
+                  <img
+                    src={admin?.photoUrl || "/default-profile.png"}
+                    alt="profile photo"
+                  />
                   {admin.photoUrl ? (
                     <></>
                   ) : (
@@ -143,7 +142,7 @@ const ProfileContainer = () => {
                   <div className="profile__fields">
                     <div className="profile__field">
                       <label>Full Name</label>
-                      {isEditing && admin.provider === "password" ? (
+                      {admin.provider === "password" ? (
                         <input
                           type="text"
                           value={isEditName}
@@ -159,20 +158,11 @@ const ProfileContainer = () => {
                     </div>
                     <div className="profile__field">
                       <label>Phone Number</label>
-                      {isEditing ? (
-                        <input
-                          type="tel"
-                          value={isEditPhone}
-                          onChange={(e) => setIsEditPhone(e.target.value)}
-                        />
+
+                      {admin.phone ? (
+                        <span>{`${admin.phone}`}</span>
                       ) : (
-                        <>
-                          {admin.phone ? (
-                            <span>{`${admin.phone}`}</span>
-                          ) : (
-                            <p>Not Provided</p>
-                          )}
-                        </>
+                        <p>Not Provided</p>
                       )}
                     </div>
                   </div>
@@ -191,7 +181,7 @@ const ProfileContainer = () => {
                     </div> */}
                     <div className="profile__field">
                       <label>Join Date</label>
-                      <span>{admin.createdAt.slice(0, 10)}</span>
+                      <span>{admin.createdAt.toString().split("T")[0]}</span>
                     </div>
                   </div>
                 </div>
